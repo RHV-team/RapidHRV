@@ -30,5 +30,3 @@ rapidhrv.visualize.visualize(inputdata=mypreprocessed_data, inputframe=myheartda
 
 ## License
 MIT License
-
-Copyright (c) 2021 Peter A. Kirk, Sarah N. Garfinkel, & Oliver J. Robinson.
