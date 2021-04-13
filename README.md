@@ -4,10 +4,8 @@ RapidHRV is a Python library for preprocessing, analyzing, and visualizing cardi
 
 ## Installation
 
-
-
 ```bash
-
+pip install rapidhrv
 ```
 
 ## Usage
@@ -24,9 +22,6 @@ rapidhrv.visualize.visualize(inputdata=mypreprocessed_data, inputframe=myheartda
                              features=myfeatures)  # returns interactive matplotlib object, displaying time series BPM and RMSSD time series
 
 ```
-
-## Contributing
-
 
 ## License
 MIT License
