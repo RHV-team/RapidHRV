@@ -16,10 +16,10 @@ import rapidhrv
 
 processedData = rapidhrv.preprocess.preprocess(inputdata=mydata, samplingrate=250)  # returns upsampled, high-pass filtered, smoothed data
 
-rapidhrv.analyze.extract_heart(inputdata=processedData,resampledrate=1000)  # returns dictionary with analyzed data
+analyzedData = rapidhrv.analyze.extract_heart(inputdata=processedData,resampledrate=1000)  # returns dictionary with analyzed data
 
-rapidhrv.visualize.visualize(inputdata=mypreprocessed_data, inputframe=myheartdata,
-                             features=myfeatures)  # returns interactive matplotlib object, displaying time series BPM and RMSSD time series
+rapidhrv.visualize.visualize(inputdata=processedData, inputframe=analyzedData['data'],
+                             features=analyzedData['features'])  # returns interactive matplotlib object, displaying time series BPM and RMSSD time series
 
 ```
 
