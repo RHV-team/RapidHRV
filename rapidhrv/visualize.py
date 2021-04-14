@@ -44,7 +44,6 @@ def _time_series_visualization(inputframe, ylim=None):
     axs[1].set_xlim(inputframe['data']['Time'].iloc[0] - 5, inputframe['data']['Time'].iloc[-1] + 5)
     axs[1].set_ylim(ylim[0] - 20, ylim[1] + 20)
 
-
     # HRV Axes
     axs[2].set_xlim(inputframe['data']['Time'].iloc[0] - 5, inputframe['data']['Time'].iloc[-1] + 5)
     axs[2].set_ylim(ylim[2] - 20, ylim[3] + 20)
@@ -112,9 +111,9 @@ class Visualize:
         self.window_plot(event.xdata)  # Once user clicks on graph, pass to window_plot
 
     def window_plot(self, xclick):
-        timeArray = np.asarray(self.exptime)
-        idx = int((np.abs(timeArray - xclick)).argmin())
-        section = int(timeArray[idx] * self.samplingrate)
+        time_array = np.asarray(self.exptime)
+        idx = int((np.abs(time_array - xclick)).argmin())
+        section = int(time_array[idx] * self.samplingrate)
         timepoint = round(self.exptime.iloc[idx], 2)
 
         # Get plotting data
@@ -132,7 +131,7 @@ class Visualize:
         # Get and screen peaks
         peaks, properties = _get_peaks(inputdata=normed_data, distance=self.mindistance, prominence=self.minamplitude,
                                        k=self.k)
-        Outliers, prom_thresholds, height_thresholds, _, _, IBIOutliers, baseheight = \
+        outliers, prom_thresholds, height_thresholds, _, _, ibi_outliers, baseheight = \
             _outlier_detect(inputdata=normed_data, inputpeaks=peaks, properties=properties,
                             minpeaks=self.numpeaksneeded, minwindow=self.minwindow, samplingrate=self.samplingrate,
                             mad=self.mad, ibimad=self.ibimad, bpmrange=self.bpmrange, rmssdrange=self.rmssdrange)
@@ -156,10 +155,10 @@ class Visualize:
             axarr.plot(peaks / self.samplingrate, baseheight, "--", color="black", linewidth=3)
 
         # Plot Labchart data
-        textBox = f'HR = {np.round(self.bpm.iloc[idx], 2)}, RMSSD = {np.round(self.rmssd.iloc[idx], 2)}'
-        if Outliers:
-            axarr.text(0, 0, textBox, fontsize=18, bbox=dict(boxstyle="round", facecolor="pink"))
+        text_box = f'HR = {np.round(self.bpm.iloc[idx], 2)}, RMSSD = {np.round(self.rmssd.iloc[idx], 2)}'
+        if outliers:
+            axarr.text(0, 0, text_box, fontsize=18, bbox=dict(boxstyle="round", facecolor="pink"))
         else:
-            axarr.text(0, 0, textBox, fontsize=18, bbox=dict(boxstyle="round", facecolor="white"))
+            axarr.text(0, 0, text_box, fontsize=18, bbox=dict(boxstyle="round", facecolor="white"))
 
         fig.show()

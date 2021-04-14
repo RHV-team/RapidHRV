@@ -13,13 +13,13 @@ def _normalize_data(data):
 # Derive RMSSD
 def _get_rmssd(inputpeaks, samplingrate, minpeaks):
     if len(inputpeaks) > minpeaks:
-        IBI = np.array([x - inputpeaks[i - 1] for i, x in enumerate(inputpeaks)][1:])  # Interbeat Intervals
-        IBIms = IBI * 1000 / samplingrate  # Convert to ms (1000)
-        SD = np.diff(IBIms)  # Successive differences in IBI
-        SSD = np.square(SD)  # Square of successive differences
-        MSSD = np.mean(SSD)  # Mean square of successive differences
-        RMSSD = np.sqrt(MSSD)  # Root mean square of successive differences
-        return RMSSD
+        ibi = np.array([x - inputpeaks[i - 1] for i, x in enumerate(inputpeaks)][1:])  # Interbeat Intervals
+        ibi_ms = ibi * 1000 / samplingrate  # Convert to ms (1000)
+        sd = np.diff(ibi_ms)  # Successive differences in IBI
+        ssd = np.square(sd)  # Square of successive differences
+        mssd = np.mean(ssd)  # Mean square of successive differences
+        rmssd = np.sqrt(mssd)  # Root mean square of successive differences
+        return rmssd
     else:
         return np.nan
 
@@ -27,10 +27,10 @@ def _get_rmssd(inputpeaks, samplingrate, minpeaks):
 # Derive SDNN
 def _get_sdnn(inputpeaks, samplingrate, minpeaks):
     if len(inputpeaks) > minpeaks:
-        IBI = np.array([x - inputpeaks[i - 1] for i, x in enumerate(inputpeaks)][1:])  # NN Intervals
-        IBIms = IBI * 1000 / samplingrate  # Convert to ms (1000)
-        SDNN = np.std(IBIms)  # Standard deviation of NN intervals
-        return SDNN
+        ibi = np.array([x - inputpeaks[i - 1] for i, x in enumerate(inputpeaks)][1:])  # NN Intervals
+        ibi_ms = ibi * 1000 / samplingrate  # Convert to ms (1000)
+        sdnn = np.std(ibi_ms)  # Standard deviation of NN intervals
+        return sdnn
     else:
         return np.nan
 
@@ -38,9 +38,9 @@ def _get_sdnn(inputpeaks, samplingrate, minpeaks):
 # Derive BPM
 def _get_bpm(inputpeaks, samplingrate, minpeaks):
     if len(inputpeaks) > minpeaks:
-        actWindow = ((inputpeaks[-1] - inputpeaks[0]) / samplingrate)
-        BPM = ((len(inputpeaks) - 1) * 60) / actWindow
-        return BPM
+        act_window = ((inputpeaks[-1] - inputpeaks[0]) / samplingrate)
+        bpm = ((len(inputpeaks) - 1) * 60) / act_window
+        return bpm
     else:
         return np.nan
 
@@ -48,7 +48,6 @@ def _get_bpm(inputpeaks, samplingrate, minpeaks):
 # Outlier detection
 def _outlier_detect(inputdata, inputpeaks, properties, minpeaks, minwindow, samplingrate, mad, ibimad, bpmrange,
                     rmssdrange):
-
     if len(inputpeaks) < minpeaks:
         return True, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
     else:
@@ -57,44 +56,45 @@ def _outlier_detect(inputdata, inputpeaks, properties, minpeaks, minwindow, samp
         rmssd = _get_rmssd(inputpeaks=inputpeaks, samplingrate=samplingrate, minpeaks=minpeaks)
 
         # Gather data
-        baseheight = inputdata[inputpeaks] - properties['prominences']  # Baseline
+        base_height = inputdata[inputpeaks] - properties['prominences']  # Baseline
         prominences = properties['prominences'] - np.mean(properties['prominences'])  # Mean center prominences
         heights = properties['peak_heights'] - np.mean(properties['peak_heights'])  # Mean center heights
-        IBI = np.array([x - inputpeaks[i - 1] for i, x in enumerate(inputpeaks)][1:])  # Interbeat intervals
-        IBI = IBI - np.mean(IBI)  # Mean-center
+        ibi = np.array([x - inputpeaks[i - 1] for i, x in enumerate(inputpeaks)][1:])  # Interbeat intervals
+        ibi = ibi - np.mean(ibi)  # Mean-center
 
         # Check window length
         actwindowwidth = ((inputpeaks[-1] - inputpeaks[0]) / samplingrate)
 
         # Detect prominence outliers
-        promMADUnits = median_abs_deviation(prominences)  # Calculate MAD units
-        promOutliers = [np.greater(prominences, mad * promMADUnits) |
-                        np.less(prominences, -mad * promMADUnits)]  # Detect outliers
+        prom_mad_units = median_abs_deviation(prominences)  # Calculate MAD units
+        prom_outliers = [np.greater(prominences, mad * prom_mad_units) |
+                         np.less(prominences, -mad * prom_mad_units)]  # Detect outliers
 
         # Detect height outliers
-        heightMADUnits = median_abs_deviation(heights)  # Calculate MAD units
-        heightOutliers = [np.greater(heights, mad * heightMADUnits) |
-                          np.less(heights, -mad * heightMADUnits)]  # Detect  outliers
+        height_mad_units = median_abs_deviation(heights)  # Calculate MAD units
+        height_outliers = [np.greater(heights, mad * height_mad_units) |
+                           np.less(heights, -mad * height_mad_units)]  # Detect  outliers
 
         # Detect successive difference outliers
-        IBIMADUnits = median_abs_deviation(IBI)  # Calculate MAD units
-        IBIOutliers = [np.greater(IBI, ibimad * IBIMADUnits) |
-                       np.less(IBI, -ibimad * IBIMADUnits)]  # Detect  outliers
+        ibi_mad_units = median_abs_deviation(ibi)  # Calculate MAD units
+        ibi_outliers = [np.greater(ibi, ibimad * ibi_mad_units) |
+                        np.less(ibi, -ibimad * ibi_mad_units)]  # Detect  outliers
 
         # Height thresholds
-        heightThresholds = [(-mad * heightMADUnits) + np.mean(properties['peak_heights']),
-                            (mad * heightMADUnits) + np.mean(properties['peak_heights'])]
+        height_thresholds = [(-mad * height_mad_units) + np.mean(properties['peak_heights']),
+                             (mad * height_mad_units) + np.mean(properties['peak_heights'])]
 
         # Prominence thresholds
-        PromLowThreshold = baseheight + np.mean(properties['prominences']) - (mad * promMADUnits)
-        PromHighThreshold = baseheight + np.mean(properties['prominences']) + (mad * promMADUnits)
-        prom_Thresholds = [PromLowThreshold, PromHighThreshold]
+        prom_low_threshold = base_height + np.mean(properties['prominences']) - (mad * prom_mad_units)
+        prom_high_threshold = base_height + np.mean(properties['prominences']) + (mad * prom_mad_units)
+        prom_thresholds = [prom_low_threshold, prom_high_threshold]
 
-        OutlierCheck = np.any(promOutliers) | np.any(heightOutliers) | np.any(IBIOutliers) | \
-                       (actwindowwidth < minwindow) | (bpm < bpmrange[0]) | (bpm > bpmrange[1]) | \
-                       (rmssd < rmssdrange[0]) | (rmssd > rmssdrange[1])
+        outlier_check = np.any(prom_outliers) | np.any(height_outliers) | np.any(ibi_outliers) |\
+                        (actwindowwidth < minwindow) | (bpm < bpmrange[0]) | (bpm > bpmrange[1]) | \
+                        (rmssd < rmssdrange[0]) | (rmssd > rmssdrange[1])
 
-        return OutlierCheck, prom_Thresholds, heightThresholds, promOutliers, heightOutliers, IBIOutliers, baseheight
+        return outlier_check, prom_thresholds, height_thresholds, prom_outliers, height_outliers, ibi_outliers, \
+               base_height
 
 
 # Function to run peak detection on a window.
@@ -137,8 +137,8 @@ def _get_peaks(inputdata, distance=200, prominence=50, k=1):
 
 def _moving_window(inputdata, windowwidth, windowmovement, samplingrate, numpeaksneeded, mad, ibimad, minamplitude,
                    minwindow, bpmrange, rmssdrange, mindistance, clusters):
-    dataFrameCols = ['Time', 'BPM', 'CleanedBPM', 'RMSSD', 'CleanedRMSSD', 'SDNN', 'CleanedSDNN']
-    rapiddata = pd.DataFrame(columns=dataFrameCols)
+    data_frame_cols = ['Time', 'BPM', 'CleanedBPM', 'RMSSD', 'CleanedRMSSD', 'SDNN', 'CleanedSDNN']
+    rapiddata = pd.DataFrame(columns=data_frame_cols)
 
     for section in range(0, len(inputdata) - int(windowwidth * samplingrate) + 1, int(windowmovement * samplingrate)):
         exptime = section / samplingrate  # Note time
@@ -149,27 +149,27 @@ def _moving_window(inputdata, windowwidth, windowmovement, samplingrate, numpeak
         normed_data = _normalize_data(data=segment)  # Scale so min = 0, max = 100
         peaks, properties = _get_peaks(inputdata=normed_data, distance=mindistance, prominence=minamplitude, k=clusters)
 
-        BPM = _get_bpm(inputpeaks=peaks, samplingrate=samplingrate, minpeaks=numpeaksneeded)  # HR
-        RMSSD = _get_rmssd(inputpeaks=peaks, samplingrate=samplingrate, minpeaks=numpeaksneeded)  # HRV
-        SDNN = _get_sdnn(inputpeaks=peaks, samplingrate=samplingrate, minpeaks=numpeaksneeded)
+        bpm = _get_bpm(inputpeaks=peaks, samplingrate=samplingrate, minpeaks=numpeaksneeded)  # HR
+        rmssd = _get_rmssd(inputpeaks=peaks, samplingrate=samplingrate, minpeaks=numpeaksneeded)  # HRV
+        sdnn = _get_sdnn(inputpeaks=peaks, samplingrate=samplingrate, minpeaks=numpeaksneeded)
 
-        Outliers, _, _, _, _, _, _ = \
+        outliers, _, _, _, _, _, _ = \
             _outlier_detect(inputdata=normed_data, inputpeaks=peaks, properties=properties, minpeaks=numpeaksneeded,
                             minwindow=minwindow, samplingrate=samplingrate, mad=mad, ibimad=ibimad, bpmrange=bpmrange,
                             rmssdrange=rmssdrange)
 
-        if Outliers:
-            cleanedBPM = np.nan
-            cleanedRMSSD = np.nan
-            cleanedSDNN = np.nan
+        if outliers:
+            cleaned_bpm = np.nan
+            cleaned_rmssd = np.nan
+            cleaned_sdnn = np.nan
         else:
-            cleanedBPM = BPM
-            cleanedRMSSD = RMSSD
-            cleanedSDNN = SDNN
+            cleaned_bpm = bpm
+            cleaned_rmssd = rmssd
+            cleaned_sdnn = sdnn
 
         rapiddata = rapiddata.append(
-            pd.DataFrame(data=[[exptime, BPM, cleanedBPM, RMSSD, cleanedRMSSD, SDNN, cleanedSDNN]],
-                         columns=dataFrameCols))
+            pd.DataFrame(data=[[exptime, bpm, cleaned_bpm, rmssd, cleaned_rmssd, sdnn, cleaned_sdnn]],
+                         columns=data_frame_cols))
 
     return rapiddata, clusters
 
