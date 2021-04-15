@@ -17,7 +17,7 @@ processedData = preprocess.preprocess(inputdata=mydata, samplingrate=250)  # ret
 
 analyzedData = analyze.extract_heart(inputdata=processedData,resampledrate=1000)  # returns dictionary with analyzed data
 
-fig = visualize.visualize(inputdata=processedData, inputframe=analyzedData)  # returns interactive matplotlib object, displaying time series BPM and RMSSD time series
+fig = visualize.Visualize(inputdata=processedData, inputframe=analyzedData)  # returns interactive matplotlib object, displaying BPM and RMSSD time series
 
 ```
 

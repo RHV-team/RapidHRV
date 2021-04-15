@@ -64,6 +64,8 @@ def _time_series_visualization(inputframe, ylim=None):
     axs[3].plot(cleanedoutput['Time'], cleanedoutput['CleanedRMSSD'], color='purple', linewidth=3, alpha=0.3)
     axs[3].scatter(cleanedoutput['Time'], cleanedoutput['CleanedRMSSD'], s=4, color='purple')
 
+    fig.show()
+
     return fig
 
 
