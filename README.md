@@ -23,6 +23,11 @@ analyzedData = analyze.extract_heart(inputdata=procData,resampledrate=1000)  # r
 fig = visualize.Visualize(inputdata=procData, inputframe=analyzedData)  # returns interactive matplotlib object, displaying BPM and RMSSD time series
 ```
 
+Based on our validation paper (https://psyarxiv.com/3ewgz/), we make the following modality-specific suggestions as 
+starting points for function arguments.
+
+![Suggestions](./Images/Modality_suggestions.png)
+
 ## Visualization Bug
 
 At present (V 0.0.6), the visualization module has been verified to work in Pycharm on an Ubuntu 20.04 OS. Some users 
