@@ -21,7 +21,7 @@ Here, we can see high-pass filtering has helped with the drift...
 
 ![Example_overview](../Images/Example_data_overview.png)
 
-...and increased the temporal precision of peaks within the data.
+...and upsampling/smoothing has increased the temporal precision of peaks within the data.
 
 ![Example_peaks](../Images/Example_data_peaks.png)
 
