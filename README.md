@@ -1,7 +1,7 @@
 ![Logo](https://github.com/peterakirk/RapidHRV/blob/main/Images/Logo.png?raw=true)
 
 
-RapidHRV is a Python library for preprocessing, analyzing, and visualizing cardiac data (validated on ECG, Pulse Oximetry, and PPG).
+RapidHRV is a Python pipeline for the analysis and visualization of cardiac data (validated on ECG, Pulse Oximetry, and PPG).
 
 ## Installation
 
