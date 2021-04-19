@@ -21,9 +21,9 @@ procData = preprocess.preprocess(inputdata=data, samplingrate=20)
 
 
 
-Here, you can see high-pass filtering has helped with some of the drift and also increased the temporal precision of peaks within the data 
+Here, you can see high-pass filtering has helped with the drift and also increased the temporal precision of peaks within the data 
 
-![Example](https://github.com/peterakirk/RapidHRV/tree/viz_fix/Images/Example_data_overview.png)
+![Example](https://github.com/peterakirk/RapidHRV/blob/viz_fix/Images/Example_data_overview.png)
 
 ![Example](https://github.com/peterakirk/RapidHRV/tree/viz_fix/Images/Example_data_peaks.png)
 
