@@ -2,7 +2,7 @@ from rapidhrv.analyze import _outlier_detect, _normalize_data, _get_peaks
 import numpy as np
 import matplotlib.pyplot as plt  # Plotting
 
-plt.ion() # Ensure interactive mode is on
+plt.ion()  # Ensure interactive mode is on
 
 # Visualize data
 def _time_series_visualization(inputframe, ylim=None):
