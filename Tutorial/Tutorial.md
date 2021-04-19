@@ -55,8 +55,8 @@ In this analysis, we can see some rejected cases which contained otherwise usabl
 
 ![Example_viz2](../Images/Click_Reject.png)
 
-As the signal here is relatively clean, small deviations are being detected as noise. Therefore, you may want to either:
-1) use the uncleaned time series; or 2) relax outlier rejection thresholding (e.g. outliermethod='liberal').
+As the signal here is relatively clean, small deviations are being detected as noise. Therefore, you may want to 
+either: 1) use the uncleaned time series; or 2) relax outlier rejection thresholding (e.g. outliermethod='liberal').
 
 Final script:
 
