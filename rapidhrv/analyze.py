@@ -211,8 +211,8 @@ def extract_heart(inputdata, resampledrate, ecgclustering=False, windowwidth=10,
     (default = round(samplingrate / 4) ≈ 250ms)
 
     Returns:
-    dictionary:output. ['data'] is Dataframe containing experiment time (starting from 0), Uncleaned BPM, Cleaned BPM,
-    Uncleaned RMSSD, and Cleaned RMSSD. ['features'] contains parameters from extract_heart.
+    dictionary:output. ['data'] is Dataframe containing experiment time (starting from 0), BPM, RMSSD,SDNN.
+    ['features'] contains parameters from extract_heart.
 
    """
 

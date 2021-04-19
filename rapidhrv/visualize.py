@@ -2,6 +2,7 @@ from rapidhrv.analyze import _outlier_detect, _normalize_data, _get_peaks
 import numpy as np
 import matplotlib.pyplot as plt  # Plotting
 
+plt.ion() # Ensure interactive mode is on
 
 # Visualize data
 def _time_series_visualization(inputframe, ylim=None):
@@ -64,7 +65,8 @@ def _time_series_visualization(inputframe, ylim=None):
     axs[3].plot(cleanedoutput['Time'], cleanedoutput['CleanedRMSSD'], color='purple', linewidth=3, alpha=0.3)
     axs[3].scatter(cleanedoutput['Time'], cleanedoutput['CleanedRMSSD'], s=4, color='purple')
 
-    fig.show()
+    # fig.show()
+    plt.show()
 
     return fig
 
@@ -163,4 +165,5 @@ class Visualize:
         else:
             axarr.text(0, 0, text_box, fontsize=18, bbox=dict(boxstyle="round", facecolor="white"))
 
-        fig.show()
+        # fig.show()
+        plt.show()
