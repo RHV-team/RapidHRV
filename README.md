@@ -30,7 +30,7 @@ starting points for function arguments.
 
 ## Visualization Bug
 
-At present (V 0.0.7), the visualization module has been verified to work in Pycharm on an Ubuntu 20.04 OS. Some users 
+At present (V 0.1.0), the visualization module has been verified to work in Pycharm on an Ubuntu 20.04 OS. Some users 
 have noted issues with interactive plotting in other IDEs/operating systems. We are currently working on a fix.
 
 ## License
