@@ -51,7 +51,8 @@ We can then click on specific datapoints to check performance.
 
 ![Example_viz2](../Images/Click.png)
 
-In this analysis, we can see some rejected cases which contained otherwise usable data.
+In this analysis, we can see some rejected cases (i.e. due to the last peak's heights) which contained otherwise usable
+data.
 
 ![Example_viz2](../Images/Click_Reject.png)
 
