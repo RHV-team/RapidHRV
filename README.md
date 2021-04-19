@@ -1,4 +1,4 @@
-![Logo](./Images/Logo.png?raw=true)
+![Logo](https://github.com/peterakirk/RapidHRV/blob/main/Images/Logo.png?raw=true)
 
 
 RapidHRV is a Python library for preprocessing, analyzing, and visualizing cardiac data (validated on ECG, Pulse Oximetry, and PPG).
@@ -26,7 +26,7 @@ fig = visualize.Visualize(inputdata=procData, inputframe=analyzedData)  # return
 Based on our validation paper (https://psyarxiv.com/3ewgz/), we make the following modality-specific suggestions as 
 starting points for function arguments.
 
-![Suggestions](./Images/Modality_suggestions.png)
+![Suggestions](https://github.com/peterakirk/RapidHRV/blob/main/Images/Modality_suggestions.png?raw=true)
 
 ## Visualization Bug
 
