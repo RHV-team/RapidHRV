@@ -51,9 +51,23 @@ We can then click on specific datapoints to check performance.
 
 ![Example_viz2](../Images/Click.png)
 
-In this case, we can see some cases were usable windows were rejected.
+In this analysis, we can see some rejected cases which contained otherwise usable data.
 
 ![Example_viz2](../Images/Click_Reject.png)
 
-As the data here is quite clean, small deviations are being detected as noise. Therefore, you may want to either: 1) use the
-uncleaned time series; or 2) relax outlier rejection thresholding (e.g. outliermethod='liberal').
+As the signal here is relatively clean, small deviations are being detected as noise. Therefore, you may want to either:
+1) use the uncleaned time series; or 2) relax outlier rejection thresholding (e.g. outliermethod='liberal').
+
+Final script:
+
+
+```python
+import numpy as np
+from rapidhrv import preprocess, analyze, visualize
+
+data = np.load('Example_data.npy')
+
+analyzedData = analyze.extract_heart(inputdata=procData, samplingrate=20)
+
+fig = analyze.extract_heart(inputdata=procData, inputframe=analyzedData)
+```
