@@ -43,4 +43,17 @@ Lastly, we can use the visualization module to have a check that RapidHRV is doi
 fig = analyze.extract_heart(inputdata=procData, inputframe=analyzedData)
 ```
 
-![Example_viz](../Images/Visualization.png)
+Firstly, this plots the time series of analyzed data.
+
+![Example_viz](../Images/Tutorial_time_series.png)
+
+We can then click on specific datapoints to check performance.
+
+![Example_viz2](../Images/Click.png)
+
+In this case, we can see some cases were usable windows were rejected.
+
+![Example_viz2](../Images/Click_Reject.png)
+
+As the data here is quite clean, small deviations are being detected as noise. Therefore, you may want to either: 1) use the
+uncleaned time series; or 2) relax outlier rejection thresholding (e.g. outliermethod='liberal').
