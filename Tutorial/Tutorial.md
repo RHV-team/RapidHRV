@@ -47,17 +47,17 @@ This plots the time series of analyzed data.
 
 ![Example_viz](../Images/Tutorial_time_series.png)
 
-We can then click on specific datapoints to check performance.
+We can then click on specific datapoints to check performance. RapidHRV is performing as expected here.
 
 ![Example_viz2](../Images/Click.png)
 
-In this analysis, we can see some rejected cases (i.e. due to the last peak's heights) which contained otherwise usable
-data.
+In this analysis, we can see some rejected cases (in the analyzed time series) which contained otherwise usable
+data. In the instance below, this is due to the last peak's height.
 
 ![Example_viz2](../Images/Click_Reject.png)
 
 As the signal here is relatively clean, small deviations are being detected as noise. Therefore, you may want to 
-either: 1) use the uncleaned time series; or 2) relax outlier rejection thresholding (e.g. outliermethod='liberal').
+either: 1) use the uncleaned time series (e.g. analyzedData['data']['UncleanedRMSSD']); or 2) relax outlier rejection thresholding (e.g. outliermethod='liberal').
 
 Final script:
 
