@@ -10,22 +10,23 @@ pip install rapidhrv
 ```
 
 ## Usage
+RapidHRV comes with three modules, each of which requires one function to run. For a step-by-step tutorial, see 
+[Tutorial.md](./Tutorial/Tutorial.md).
 
 ```python
 from rapidhrv import preprocess, analyze, visualize
 
-processedData = preprocess.preprocess(inputdata=mydata, samplingrate=250)  # returns upsampled, high-pass filtered, smoothed data
+procData = preprocess.preprocess(inputdata=mydata, samplingrate=250)  # returns upsampled, high-pass filtered, smoothed data
 
-analyzedData = analyze.extract_heart(inputdata=processedData,resampledrate=1000)  # returns dictionary with analyzed data
+analyzedData = analyze.extract_heart(inputdata=procData,resampledrate=1000)  # returns dictionary with analyzed data
 
-fig = visualize.Visualize(inputdata=processedData, inputframe=analyzedData)  # returns interactive matplotlib object, displaying BPM and RMSSD time series
-
+fig = visualize.Visualize(inputdata=procData, inputframe=analyzedData)  # returns interactive matplotlib object, displaying BPM and RMSSD time series
 ```
 
 ## Visualization Bug
 
-At present (V 0.0.6), the visualization module has been verified to work in Pycharm. Some users have noted issues with interactive 
-plotting in other IDEs. We are currently working on this.
+At present (V 0.0.6), the visualization module has been verified to work in Pycharm on an Ubuntu 20.04 OS. Some users 
+have noted issues with interactive plotting in other IDEs/operating systems. We are currently working on a fix.
 
 ## License
 MIT License
