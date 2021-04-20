@@ -29,7 +29,7 @@ Here, we can see high-pass filtering has helped with the drift...
 We can now submit this data to analysis...
 
 ```python
-analyzedData = analyze.extract_heart(inputdata=procData, samplingrate=20)
+analyzedData = analyze.extract_heart(inputdata=procData, resampledrate=1000)
 ```
 ...which outputs a dictionary containing the analyzed time series ('data') and parameter arguments used for analysis 
 ('features').
