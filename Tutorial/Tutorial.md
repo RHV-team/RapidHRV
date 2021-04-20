@@ -40,7 +40,7 @@ Lastly, we can use the visualization module to have a check that RapidHRV is doi
 
 
 ```python
-fig = analyze.extract_heart(inputdata=procData, inputframe=analyzedData)
+fig = visualize.Visualize(inputdata=procData, inputframe=analyzedData)
 ```
 
 This plots the time series of analyzed data.
