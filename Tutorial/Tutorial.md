@@ -70,7 +70,7 @@ data = np.load('Example_data.npy')
 
 procData = preprocess.preprocess(inputdata=data, samplingrate=20)
 
-analyzedData = analyze.extract_heart(inputdata=procData, samplingrate=20)
+analyzedData = analyze.extract_heart(inputdata=procData, resampledrate=1000)
 
 fig = analyze.extract_heart(inputdata=procData, inputframe=analyzedData)
 ```
