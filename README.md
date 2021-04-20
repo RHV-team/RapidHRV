@@ -33,5 +33,9 @@ starting points for function arguments.
 At present (>= V 0.0.1), the visualization module has been verified to work in Pycharm on an Ubuntu 20.04 OS. Some users 
 have noted issues with interactive plotting in other IDEs/operating systems. We are currently working on a fix.
 
+Spyder users: You'll need to change the backend to automatic via Tools > preferences > IPython console > Graphics > 
+Graphics backend > Backend: Automatic. Then restart Spyder. Instead of plotting figures in the console, this will open 
+figures in a new window.
+
 ## License
 MIT License
