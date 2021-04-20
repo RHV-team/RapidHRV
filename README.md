@@ -31,12 +31,13 @@ starting points for function arguments.
 ## Visualization Bug
 
 Some users have noted issues with interactive plotting which we believe is related to the way matplotlib employs user 
-interface backends. At present (>= V 0.0.1), the visualization module has been verified to work in Pycharm, Spyder (see 
-below), and the ordinary Python shell on an Ubuntu 20.04 OS. It will not work on IDLE. 
+interface backends. At present (0.1.3), the visualization module has been verified to work in Pycharm, Spyder (see 
+below), and the ordinary Python shell on an Ubuntu 20.04 OS. It will not work on IDLE (see 
+[here](https://matplotlib.org/3.1.0/tutorials/introductory/usage) for further details).
 
 Spyder users: You'll need to change the backend to automatic via Tools > preferences > IPython console > Graphics > 
-Graphics backend > Backend: Automatic. Then close/re-open Spyder. Instead of plotting figures in the console, this will 
-open figures in a new window.
+Graphics backend > Backend: Automatic. Then close/re-open Spyder. Instead of plotting figures in the console, figures 
+will now open in a new window.
 
 ## License
 MIT License
