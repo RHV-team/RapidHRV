@@ -1,7 +1,14 @@
 ![Logo](https://github.com/peterakirk/RapidHRV/blob/main/Images/Logo.png?raw=true)
 
 
-RapidHRV is a Python pipeline for the analysis and visualization of cardiac data (validated on ECG, Pulse Oximetry, and PPG).
+RapidHRV is a Python pipeline for the analysis and visualization of cardiac data (validated on ECG, Pulse Oximetry, and 
+PPG).
+
+Please provide credit where appropriate:
+
+Kirk, P. A., Garfinkel, S., & Robinson, O. J. (2021). RapidHRV: An open-source toolbox for extracting heart rate and 
+heart rate variability. PsyArXiv. https://doi.org/10.31234/osf.io/3ewgz.
+
 
 ## Installation
 
