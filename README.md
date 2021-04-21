@@ -28,16 +28,28 @@ starting points for function arguments.
 
 ![Suggestions](https://github.com/peterakirk/RapidHRV/blob/main/Images/Modality_suggestions.png?raw=true)
 
-## Visualization Bug
+## Interactive Visualizations
 
-Some users have noted issues with interactive plotting which we believe is related to the way matplotlib employs user 
-interface backends. At present (0.1.3), the visualization module has been verified to work in Pycharm, Spyder (see 
-below), and the ordinary Python shell on an Ubuntu 20.04 OS. It will not work on IDLE (see 
-[here](https://matplotlib.org/3.1.0/tutorials/introductory/usage) for further details).
+Some users have noted IDE-specific issues with interactive plotting which we believe is related to the way matplotlib 
+employs user interface backends. At present (0.1.4), the visualization module has been verified to work in Pycharm, 
+Spyder, Jupyter Notebook, Visual Studio Code, and the ordinary Python shell on an Ubuntu 20.04 OS, though some of these
+require a workaround (see below). It will not work on IDLE 
+([details](https://matplotlib.org/3.1.0/tutorials/introductory/usage)).
 
-Spyder users: You'll need to change the backend to automatic via Tools > preferences > IPython console > Graphics > 
+**Spyder** users will need to change the backend to automatic via Tools > preferences > IPython console > Graphics > 
 Graphics backend > Backend: Automatic. Then close/re-open Spyder. Instead of plotting figures in the console, figures 
 will now open in a new window.
+
+**Jupyter Notebook/Visual Studio Code** users will need to specify the matplotlib backend at the very beginning of the script. For a 
+full list of acceptable arguments, see [here](https://matplotlib.org/2.0.2/faq/usage_faq.html#what-is-a-backend). 
+Example:
+
+```python
+import matplotlib
+matplotlib.use('tkagg')
+import numpy as np
+from rapidhrv import preprocess, analyze, visualize
+```
 
 ## License
 MIT License
