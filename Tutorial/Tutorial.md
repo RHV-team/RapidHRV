@@ -1,9 +1,11 @@
 # RapidHRV Tutorial
 
+If you haven't already, please read the 'Interactive Visualizations' section in the 
+[README.md](https://github.com/peterakirk/RapidHRV/blob/main/README.md) before starting the tutorial.
+
 This tutorial demonstrates how to preprocess, analyze, and visualize data. Attached is an example dataset: a 5 minute 
 segment of simulated PPG data downsampled to 20Hz and with added white gaussian noise (20dB). First, we need to import 
-packages and load the data. Note: please see 'Interactive Visualizations' in the 
-[README.md](https://github.com/peterakirk/RapidHRV/blob/main/README.md). 
+packages and load the data. 
 
 ```python
 import numpy as np
