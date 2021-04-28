@@ -41,7 +41,7 @@ et al., 2019). A key issue that arises in these settings however is the low sign
 `[@Caizzone:2017]`, leading to highly noisy points estimates. Whilst some packages are available for the analysis 
 of HR/HRV, these are typically modality-specific, and not targeted at wrist-worn measures (e.g. systole for pulse 
 oximetry, `@Legrand:2021`). Modality-general packages that do exist require considerable scripting if users want 
-to adapt functions to noisy, wrist-worn measures (‘Analysing_Smartwatch_Data’ in HeartPy, `@van Gent:2019`). 
+to adapt functions to noisy, wrist-worn measures (‘Analysing_Smartwatch_Data’ in HeartPy, `@van_Gent:2019`). 
 Consequently, we set out to develop a simple yet flexible toolbox for the extraction of time-domain HR/HRV measures with
 automated artifact rejection applicable across recording modalities.
 
