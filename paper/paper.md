@@ -35,13 +35,13 @@ variability, though estimates in photoplethysmography were less stable under hig
 # Statement of need
 
 Evidence has outlined a link between heart rate (HR), heart rate variability (HRV), and health-related risks 
-`[@Hillebrand:2013; @Jandackova:2016]`. There is now an influx of research looking into whether these 
-measures can be derived in naturalistic settings (e.g. wrist-worn photoplethysmography Georgiou et al., 2018; Mulcahy 
-et al., 2019). A key issue that arises in these settings however is the low signal to noise ratio 
-`[@Caizzone:2017]`, leading to highly noisy points estimates. Whilst some packages are available for the analysis 
+[@Hillebrand:2013; @Jandackova:2016]. There is now an influx of research looking into whether these 
+measures can be derived in naturalistic settings (e.g. wrist-worn photoplethysmography @Georgiou:2018; @Mulcahy: 2019).
+A key issue that arises in these settings however is the low signal to noise ratio 
+[@Caizzone:2017], leading to highly noisy points estimates. Whilst some packages are available for the analysis 
 of HR/HRV, these are typically modality-specific, and not targeted at wrist-worn measures (e.g. systole for pulse 
-oximetry, `@Legrand:2021`). Modality-general packages that do exist require considerable scripting if users want 
-to adapt functions to noisy, wrist-worn measures (‘Analysing_Smartwatch_Data’ in HeartPy, `@van_Gent:2019`). 
+oximetry, @Legrand:2021). Modality-general packages that do exist require considerable scripting if users want 
+to adapt functions to noisy, wrist-worn measures (‘Analysing_Smartwatch_Data’ in HeartPy, @van_Gent:2019). 
 Consequently, we set out to develop a simple yet flexible toolbox for the extraction of time-domain HR/HRV measures with
 automated artifact rejection applicable across recording modalities.
 
@@ -104,8 +104,8 @@ thresholds used in outlier rejection).
 To validate the above pipeline we subjected it to a series of tests across 5 datasets  (simulated and real) varying in 
 modality (electrocardiography, pulse oximetry, and photoplethysmography; for full reporting of all tests, see 
 https://psyarxiv.com/3ewgz/). In brief, `RapidHRV` was able to accurately recover heart rate and heart rate variability 
-across sampling frequencies and in relatively noisy photoplethysmography simulations (`@Tang:2020`; figure 3). 
-`RapidHRV` cleaning provided improvements in noisier simulations.
+across sampling frequencies and in relatively noisy photoplethysmography simulations `[@Tang:2020]`. 
+`RapidHRV` cleaning provided improvements in noisier simulations (figure 3).
 
 
 ![Parameter recovery of simulated PPG data as a function of heart rate variability. Y axes reflect the true 
@@ -124,8 +124,8 @@ a pulse oximetry dataset (N=39).](https://github.com/peterakirk/RapidHRV/blob/ma
 # Acknowledgements
 
 Massive thanks to Alex Davidson Bryan for helping publish the package and Kaarina Aho for statistical consultation. 
-Appreciation goes to other open-source analysis software, namely Systole `[Legrand:2021]` and HeartPy 
-`[van Gent:2019]`, which helped inspire the development of `RapidHRV`. Finally, thank you to Russell Kirk for 
+Appreciation goes to other open-source analysis software, namely Systole `[@Legrand:2021]` and HeartPy 
+`[@van_Gent:2019]`, which helped inspire the development of `RapidHRV`. Finally, thank you to Russell Kirk for 
 advice on deriving motion estimates.
 
 # References
