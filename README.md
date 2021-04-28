@@ -38,7 +38,7 @@ starting points for function arguments.
 ## Interactive Visualizations
 
 Some users have noted IDE-specific issues with interactive plotting which we believe is related to the way matplotlib 
-employs user interface backends. At present (0.1.4), the visualization module has been verified to work in Pycharm, 
+employs user interface backends. At present, the visualization module has been verified to work in Pycharm, 
 Spyder, Jupyter Notebook, Visual Studio Code, and the ordinary Python shell on an Ubuntu 20.04 OS, though some of these
 require a workaround (see below). It will not work on IDLE 
 ([details](https://matplotlib.org/3.1.0/tutorials/introductory/usage)).
@@ -56,6 +56,35 @@ import matplotlib
 matplotlib.use('tkagg')
 import numpy as np
 from rapidhrv import preprocess, analyze, visualize
+```
+
+## Other
+
+If you have high-frequency noise present in your signal (e.g. MR-related noise), upsampling may not perform optimally. 
+In such scenarios, we recommend trying to initially smooth the data prior to preprocessing. For example:
+
+```python
+import numpy as np
+import pandas as pd
+from scipy.signal import savgol_filter
+from rapidhrv import preprocess
+
+
+def initial_smooth(inputdata, hz, smoothing):
+    smooth_window = int(np.round(hz / (hz / smoothing))) + 1  # ms to samples
+    if (smooth_window % 2) == 0:  # If smoothing window is even (Sav-Gov requires odd)
+        smooth_window = smooth_window + 1
+    output = savgol_filter(inputdata, window_length=smooth_window, polyorder=3)
+    return output
+
+
+# Load Data
+filename = 'mydata.csv'
+rawECG = pd.read_csv(filename)[0]
+
+# Preprocess Data
+rawECG = initial_smooth(inputdata=rawECG, hz=50, smoothing=250)  # apply initial smoothing of 250ms
+procData = preprocess.preprocess(inputdata=rawECG, samplingrate=50, smooth=250, lowpass=20)  # + extra lowpass filtering
 ```
 
 ## License

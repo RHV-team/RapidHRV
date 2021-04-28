@@ -41,8 +41,9 @@ def preprocess(inputdata, samplingrate, resample=1000, highpass=0.5, lowpass=Non
     samplingrate (int): sampling rate in Hz
     resample(int): specify frequency in Hz. Uses cubic spline interpolation for resampling. Input 0 if not wanted.
     Optional (if samplingrate < resample, default=1000; else default=0)
-    highpass (float/int): Optional (default=0.5)
-    lowpass (float/int): Optional (default=None)
+    highpass (float/int): butterworth highpass filter specified in Hz. Optional (default=0.5)
+    lowpass (float/int): butterworth lowpass filter specified in Hz. This is typically not needed as smoothing is
+    applied by default it's here if you need it. Requires an adequate sampling rate. Optional (default=None)
     polynomial(int): order of polynomial for savitzky-golay smoothing. Optional (default=3)
     smooth(int): window in ms for for savitzky-golay smoothing. Input None if not wanted. Optional (default=100)
 
