@@ -3,13 +3,9 @@ title: 'RapidHRV: An Open-Source Toolbox for Extracting Heart Rate and Heart Rat
 tags:
   - Python
   - Psychophysiology
-  - Heart rate
   - Heart rate variability
-  - ECG
-  - Pulse Oximetry
-  - PPG
 authors:
-  - name: Peter A. Kirk^[Corresponding author. Email: p.kirk@ucl.ac.uk]
+  - name: Peter A. Kirk
     orcid: 0000-0003-0786-3039
     affiliation: "1, 2"
   - name: Sarah N. Garfinkel
@@ -25,10 +21,8 @@ affiliations:
    index: 2
  - name: Clinical, Educational and Health Psychology, University College London
    index: 3
-   
 date: 29 April 2021
 bibliography: paper.bib
-   
 ---
 
 # Summary
@@ -56,7 +50,7 @@ automated artifact rejection applicable across recording modalities.
 Below we provide an overview of `RapidHRV`'s preprocessing, analysis (figure 1), and visualization. Each of the three 
 modules only requires one function to run, for which we have embedded examples at the end of the relevant sections below.
 
-![Figure 1. Overview of `RapidHRV` pipeline. Across an entire block, the pipeline initially processes data with high-pass 
+![Overview of `RapidHRV` pipeline. Across an entire block, the pipeline initially processes data with high-pass 
 filtering, upsampling, and smoothing. `RapidHRV` then applies a sliding window across the entire block. Within each 
 window, the data are scaled. Heart rate (beats per minute) and heart rate variability (root mean squared of successive
 differences + standard deviation of intervals) are calculated for each window, and data is submitted to outlier 
@@ -98,12 +92,12 @@ from rapidhrv import visualize
 fig = visualize.Visualize(processedData, analyzedData)
 ```
 
-![Figure 2. Interactive visualization. The user is presented with a raw and cleaned time series of BPM (background, top 
+![Interactive visualization. The user is presented with a raw and cleaned time series of BPM (background, top 
 two red plots) and RMSSD (background, bottom two purple plots). Users can click on specific time points to view 
 extraction windows (top right; foreground). Extraction windows display BPM/RMSSD, as well as properties of peak 
 detection (peak position marked with an X, black dashed baseline, grey/purple dashed lines for height/prominence 
 thresholds used in outlier rejection). 
-](https://github.com/peterakirk/RapidHRV/blob/main/Images/HRV_plot.png?raw=true)
+](https://github.com/peterakirk/RapidHRV/blob/main/Images/Time_series_with_click.png?raw=true)
 
 # Validation
 
@@ -113,17 +107,18 @@ https://psyarxiv.com/3ewgz/). In brief, `RapidHRV` was able to accurately recove
 across sampling frequencies and in relatively noisy photoplethysmography simulations (`@Tang:2020`; figure 3). 
 `RapidHRV` cleaning provided improvements in noisier simulations.
 
-![Figure 3. Parameter recovery of simulated PPG data as a function of heart rate variability. Y axes reflect the true 
+
+![Parameter recovery of simulated PPG data as a function of heart rate variability. Y axes reflect the true 
 root mean square of successive differences (RMSSD) in the data, whilst the X axes reflect RapidHRV’s estimation. For 
 readability, data is only plotted in a key range of performance, 10dB to 40dB of signal to noise ratio). 
-](https://github.com/peterakirk/RapidHRV/blob/main/Images/Time_series_with_click.png?raw=true)
+](https://github.com/peterakirk/RapidHRV/blob/main/Images/HRV_plot.png?raw=true)
 
 Benchmarking in pulse oximetry data demonstrated excellent agreement between `RapidHRV` and previous estimates 
 (`@de Groot:2020`; implemented using LabChart, ADInstruments, Sydney, Australia) of BPM (Intraclass Correlations >
 .99; figure 6). For heart rate variability, there was good agreement when using the cleaned time series (ICC = .88), 
 but poor agreement when using the uncleaned time series (ICC = .46).
 
-![Figure 4. Agreement between RapidHRV and a previous analysis (de Groot et al., 2020) of heart rate and variability in 
+![Agreement between RapidHRV and a previous analysis (de Groot et al., 2020) of heart rate and variability in 
 a pulse oximetry dataset (N=39).](https://github.com/peterakirk/RapidHRV/blob/main/Images/Benchmarking_plot.png?raw=true)
 
 # Acknowledgements
