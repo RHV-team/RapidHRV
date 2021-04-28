@@ -68,8 +68,8 @@ from rapidhrv import preprocess
 processedData = preprocess.preprocess(inputData, samplingRate)
 ```
 
-Following preprocessing, the pipeline runs peak detection on every window (default width = 10s), using `SciPy`'s 
-‘find_peaks’ [@Virtanen:2020]). These windows are then submitted to outlier rejection (figure 2). By default, 
+Following preprocessing, the pipeline runs peak detection on every window (default width = 10s) using `SciPy`'s 
+‘find_peaks’ [@Virtanen:2020]. These windows are then submitted to outlier rejection (figure 2). By default, 
 `RapidHRV` returns both the cleaned and the uncleaned time series in a pandas DataFrame [@McKinney:2012]. Given that not
 all users may be entirely comfortable manually adjusting argument parameters, `RapidHRV` additionally contains 
 semantically-labelled arguments ('liberal', 'moderate' [default], and 'conservative') as inputs for outlier constraints
@@ -81,6 +81,13 @@ from rapidhrv import analyze
 analyzedData = analyze.extract_heart(inputData, resampledRate)
 ```
 
+![Overview of `RapidHRV` pipeline. Across an entire block, the pipeline initially processes data with high-pass 
+filtering, upsampling, and smoothing. `RapidHRV` then applies a sliding window across the entire block. Within each 
+window, the data are scaled. Heart rate (beats per minute) and heart rate variability (root mean squared of successive
+differences + standard deviation of intervals) are calculated for each window, and data is submitted to outlier 
+rejection. `RapidHRV` produces both a cleaned and uncleaned time series of heart rate and heart rate variability.
+](https://github.com/peterakirk/RapidHRV/blob/main/Images/Outlier_flowchart.jpg?raw=true)
+
 To allow for selected manual inspection, we have also implemented optional interactive visualizations via `matplotlib` 
 [@Hunter:2007] which plots the analyzed time course of heart rate and heart rate variability. The user can then
 select and view specific data points to see the window of extraction (Figure 3). Visualization example:
@@ -91,11 +98,11 @@ from rapidhrv import visualize
 fig = visualize.Visualize(processedData, analyzedData)
 ```
 
-![Interactive visualization. The user is presented with a raw and cleaned time series of BPM (background, top 
-two red plots) and RMSSD (background, bottom two purple plots). Users can click on specific time points to view 
-extraction windows (top right; foreground). Extraction windows display BPM/RMSSD, as well as properties of peak 
-detection (peak position marked with an X, black dashed baseline, grey/purple dashed lines for height/prominence 
-thresholds used in outlier rejection). 
+![Outlier rejection methods for `RapidHRV`. The only outlier rejection method applied to the uncleaned time series is 
+screening for a sufficient number of peaks to derive metrics. The cleaned time series then goes through a battery of 
+biological constraints (thresholding minimum/maximum beats per minute and root mean square of successive differences) 
+and statistical constraints (median absolute deviation (MAD) of peak heights, prominences, and intervals; ensuring
+adequate duration from first to last peaks). 
 ](https://github.com/peterakirk/RapidHRV/blob/main/Images/Time_series_with_click.png?raw=true)
 
 # Validation
@@ -104,7 +111,7 @@ To validate the above pipeline we subjected it to a series of tests across 5 dat
 modality (electrocardiography, pulse oximetry, and photoplethysmography; for full reporting of all tests, see 
 https://psyarxiv.com/3ewgz/). In brief, `RapidHRV` was able to accurately recover heart rate and heart rate variability 
 across sampling frequencies and in relatively noisy photoplethysmography simulations [@Tang:2020]. 
-`RapidHRV` cleaning provided improvements in noisier simulations (figure 3).
+`RapidHRV` cleaning provided improvements in noisier simulations (figure 4).
 
 
 ![Parameter recovery of simulated PPG data as a function of heart rate variability. Y axes reflect the true 
@@ -113,8 +120,8 @@ readability, data is only plotted in a key range of performance, 10dB to 40dB of
 ](https://github.com/peterakirk/RapidHRV/blob/main/Images/HRV_plot.png?raw=true)
 
 Benchmarking in pulse oximetry data demonstrated excellent agreement between `RapidHRV` and previous estimates 
-([@de_Groot:2020; implemented using LabChart, ADInstruments, Sydney, Australia] of BPM (Intraclass Correlations >
-.99; figure 6). For heart rate variability, there was good agreement when using the cleaned time series (ICC = .88), 
+[@de_Groot:2020] implemented with `LabChart` (ADInstruments, Sydney, Australia) of BPM (Intraclass Correlations >
+.99; figure 5). For heart rate variability, there was good agreement when using the cleaned time series (ICC = .88), 
 but poor agreement when using the uncleaned time series (ICC = .46).
 
 ![Agreement between RapidHRV and a previous analysis (de Groot et al., 2020) of heart rate and variability in 
