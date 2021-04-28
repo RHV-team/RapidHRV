@@ -36,7 +36,7 @@ variability, though estimates in photoplethysmography were less stable under hig
 
 Evidence has outlined a link between heart rate (HR), heart rate variability (HRV), and health-related risks 
 [@Hillebrand:2013; @Jandackova:2016]. There is now an influx of research looking into whether these 
-measures can be derived in naturalistic settings (e.g. wrist-worn photoplethysmography @Georgiou:2018; @Mulcahy: 2019).
+measures can be derived in naturalistic settings using e.g. wrist-worn photoplethysmography [@Georgiou:2018; @Mulcahy:2019].
 A key issue that arises in these settings however is the low signal to noise ratio 
 [@Caizzone:2017], leading to highly noisy points estimates. Whilst some packages are available for the analysis 
 of HR/HRV, these are typically modality-specific, and not targeted at wrist-worn measures (e.g. systole for pulse 
@@ -70,8 +70,8 @@ processedData = preprocess.preprocess(inputData, samplingRate)
 ```
 
 Following preprocessing, the pipeline runs peak detection on every window (default width = 10s; built on top of SciPy 
-‘find_peaks’, `[@Virtanen:2020]`). These windows are then submitted to outlier rejection (figure 2). By default, 
-`RapidHRV` returns both the cleaned and the uncleaned time series in a pandas DataFrame (`@McKinney:2012`; e.g. 
+‘find_peaks’, [@Virtanen:2020]). These windows are then submitted to outlier rejection (figure 2). By default, 
+`RapidHRV` returns both the cleaned and the uncleaned time series in a pandas DataFrame (@McKinney:2012; e.g. 
 analyzedData['data']). Given that not all users may be entirely comfortable manually adjusting argument parameters, 
 `RapidHRV` additionally contains semantically-labelled arguments ('liberal', 'moderate' [default], and 'conservative') as 
 inputs for outlier constraints (see below for details). Analysis example:
@@ -83,7 +83,7 @@ analyzedData = analyze.extract_heart(inputData, resampledRate)
 ```
 
 To allow for selected manual inspection, we have also implemented optional interactive visualizations via matplotlib 
-`[@Hunter:2007]` which allow the user to plot the time course of heart rate and heart rate variability. The user can then
+[@Hunter:2007] which allow the user to plot the time course of heart rate and heart rate variability. The user can then
 select and view specific data points to see the window of extraction (Figure 3). Visualization example:
 
 ```python
@@ -104,7 +104,7 @@ thresholds used in outlier rejection).
 To validate the above pipeline we subjected it to a series of tests across 5 datasets  (simulated and real) varying in 
 modality (electrocardiography, pulse oximetry, and photoplethysmography; for full reporting of all tests, see 
 https://psyarxiv.com/3ewgz/). In brief, `RapidHRV` was able to accurately recover heart rate and heart rate variability 
-across sampling frequencies and in relatively noisy photoplethysmography simulations `[@Tang:2020]`. 
+across sampling frequencies and in relatively noisy photoplethysmography simulations [@Tang:2020]. 
 `RapidHRV` cleaning provided improvements in noisier simulations (figure 3).
 
 
@@ -114,7 +114,7 @@ readability, data is only plotted in a key range of performance, 10dB to 40dB of
 ](https://github.com/peterakirk/RapidHRV/blob/main/Images/HRV_plot.png?raw=true)
 
 Benchmarking in pulse oximetry data demonstrated excellent agreement between `RapidHRV` and previous estimates 
-(`@de Groot:2020`; implemented using LabChart, ADInstruments, Sydney, Australia) of BPM (Intraclass Correlations >
+(@de Groot:2020; implemented using LabChart, ADInstruments, Sydney, Australia) of BPM (Intraclass Correlations >
 .99; figure 6). For heart rate variability, there was good agreement when using the cleaned time series (ICC = .88), 
 but poor agreement when using the uncleaned time series (ICC = .46).
 
@@ -124,8 +124,8 @@ a pulse oximetry dataset (N=39).](https://github.com/peterakirk/RapidHRV/blob/ma
 # Acknowledgements
 
 Massive thanks to Alex Davidson Bryan for helping publish the package and Kaarina Aho for statistical consultation. 
-Appreciation goes to other open-source analysis software, namely Systole `[@Legrand:2021]` and HeartPy 
-`[@van_Gent:2019]`, which helped inspire the development of `RapidHRV`. Finally, thank you to Russell Kirk for 
+Appreciation goes to other open-source analysis software, namely Systole [@Legrand:2021] and HeartPy 
+[@van_Gent:2019], which helped inspire the development of `RapidHRV`. Finally, thank you to Russell Kirk for 
 advice on deriving motion estimates.
 
 # References
