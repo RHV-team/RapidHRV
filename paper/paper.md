@@ -90,7 +90,7 @@ intervals; ensuring adequate duration from first to last peaks).
 
 To allow for selected manual inspection, we have also implemented optional interactive visualizations via `matplotlib` 
 [@Hunter:2007] which plots the analyzed HR/HRV time course. The user can then
-select and view specific data points to see the window of extraction (Figure 3). Visualization example:
+select and view specific data points to see the window of extraction (figure 3). Visualization example:
 
 ```python
 from rapidhrv import visualize
