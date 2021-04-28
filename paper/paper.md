@@ -39,11 +39,10 @@ Evidence has outlined a link between heart rate (HR), heart rate variability (HR
 measures can be derived in naturalistic settings using e.g. wrist-worn photoplethysmography [@Georgiou:2018; @Mulcahy:2019].
 A key issue that arises in these settings however is the low signal to noise ratio 
 [@Caizzone:2017], leading to highly noisy points estimates. Whilst some packages are available for the analysis 
-of HR/HRV, these are typically modality-specific, and not targeted at wrist-worn measures (e.g. systole for pulse 
-oximetry, @Legrand:2021). Modality-general packages that do exist require considerable scripting if users want 
-to adapt functions to noisy, wrist-worn measures (‘Analysing_Smartwatch_Data’ in HeartPy, @van_Gent:2019). 
-Consequently, we set out to develop a simple yet flexible toolbox for the extraction of time-domain HR/HRV measures with
-automated artifact rejection applicable across recording modalities.
+of HR/HRV, these are typically modality-specific, and not targeted at wrist-worn measures [@Legrand:2021]. 
+Modality-general packages that do exist require considerable scripting if users want to adapt functions to noisy, 
+wrist-worn measures [@van_Gent:2019]. Consequently, we set out to develop a simple yet flexible toolbox for the
+extraction of time-domain HR/HRV measures with automated artifact rejection applicable across recording modalities.
 
 # Overview and Examples
 
@@ -69,12 +68,12 @@ from rapidhrv import preprocess
 processedData = preprocess.preprocess(inputData, samplingRate)
 ```
 
-Following preprocessing, the pipeline runs peak detection on every window (default width = 10s; built on top of SciPy 
-‘find_peaks’, [@Virtanen:2020]). These windows are then submitted to outlier rejection (figure 2). By default, 
-`RapidHRV` returns both the cleaned and the uncleaned time series in a pandas DataFrame (@McKinney:2012; e.g. 
-analyzedData['data']). Given that not all users may be entirely comfortable manually adjusting argument parameters, 
-`RapidHRV` additionally contains semantically-labelled arguments ('liberal', 'moderate' [default], and 'conservative') as 
-inputs for outlier constraints (see below for details). Analysis example:
+Following preprocessing, the pipeline runs peak detection on every window (default width = 10s), using `SciPy`'s 
+‘find_peaks’ [@Virtanen:2020]). These windows are then submitted to outlier rejection (figure 2). By default, 
+`RapidHRV` returns both the cleaned and the uncleaned time series in a pandas DataFrame [@McKinney:2012]. Given that not
+all users may be entirely comfortable manually adjusting argument parameters, `RapidHRV` additionally contains 
+semantically-labelled arguments ('liberal', 'moderate' [default], and 'conservative') as inputs for outlier constraints
+(see below for details). Analysis example:
 
 ```python
 from rapidhrv import analyze
@@ -82,8 +81,8 @@ from rapidhrv import analyze
 analyzedData = analyze.extract_heart(inputData, resampledRate)
 ```
 
-To allow for selected manual inspection, we have also implemented optional interactive visualizations via matplotlib 
-[@Hunter:2007] which allow the user to plot the time course of heart rate and heart rate variability. The user can then
+To allow for selected manual inspection, we have also implemented optional interactive visualizations via `matplotlib` 
+[@Hunter:2007] which plots the analyzed time course of heart rate and heart rate variability. The user can then
 select and view specific data points to see the window of extraction (Figure 3). Visualization example:
 
 ```python
@@ -114,7 +113,7 @@ readability, data is only plotted in a key range of performance, 10dB to 40dB of
 ](https://github.com/peterakirk/RapidHRV/blob/main/Images/HRV_plot.png?raw=true)
 
 Benchmarking in pulse oximetry data demonstrated excellent agreement between `RapidHRV` and previous estimates 
-(@de Groot:2020; implemented using LabChart, ADInstruments, Sydney, Australia) of BPM (Intraclass Correlations >
+([@de_Groot:2020; implemented using LabChart, ADInstruments, Sydney, Australia] of BPM (Intraclass Correlations >
 .99; figure 6). For heart rate variability, there was good agreement when using the cleaned time series (ICC = .88), 
 but poor agreement when using the uncleaned time series (ICC = .46).
 
