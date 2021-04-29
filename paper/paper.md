@@ -64,7 +64,7 @@ spiking; and 4) normalized between 0-100 (performed within analysis). Preprocess
 ```python
 from rapidhrv import preprocess
 
-processedData = preprocess.preprocess(inputData, HZ)
+processedData = preprocess.preprocess(inputData, Hz)
 ```
 
 Within analysis, peak detection is run on every window (default width = 10s) using `SciPy`'s 
