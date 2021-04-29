@@ -29,7 +29,7 @@ bibliography: paper.bib
 
 `RapidHRV` is a Python package ([PyPi](https://pypi.org/project/rapidhrv/)) dedicated to the
 preprocessing, analysis, and visualization of time-domain heart rate (HR) and heart rate variability (HRV). Each of 
-these modules can be executed with one function and includes automated cleaning. Validation in across datasets showed 
+these modules can be executed with one function and includes automated cleaning. Validation across datasets showed 
 good-to-excellent recovery of heart rate and heart rate variability, though estimates in photoplethysmography were less
 stable under higher movement.
 
@@ -64,7 +64,7 @@ spiking; and 4) normalized between 0-100 (performed within analysis). Preprocess
 ```python
 from rapidhrv import preprocess
 
-processedData = preprocess.preprocess(inputData, samplingRate)
+processedData = preprocess.preprocess(inputData, HZ)
 ```
 
 Within analysis, peak detection is run on every window (default width = 10s) using `SciPy`'s 
@@ -77,7 +77,7 @@ semantically-labelled arguments ('liberal', 'moderate' [default], and 'conservat
 ```python
 from rapidhrv import analyze
 
-analyzedData = analyze.extract_heart(inputData, resampledRate, outliermethod='liberal')
+analyzedData = analyze.extract_heart(processedData, resampledRate)
 ```
 
 ![Outlier rejection methods. Firstly, the windows is screening for a sufficient number of peaks to derive 
@@ -125,8 +125,8 @@ a pulse oximetry dataset (N=39).](https://github.com/peterakirk/RapidHRV/blob/ma
 
 During low motion activities, RapidHRV PPG-based estimates converged with previously reported, simultaneous ECG-based 
 estimates (BPM ICC > .90; .57 < RMSSD ICC < .82) derived from an automated analysis with visual inspection 
-[@Reiss:2019]. Under high motion conditions, heart rate and heart rate variability estimates showed poor agreement 
-(ICC < .32), except for BPM during cycling (ICC = .75).
+[@Reiss:2019]. Under high motion conditions, estimates showed poor agreement (ICC < .32), except during cycling (BPM 
+ICC = .75).
 
 ![Agreement between PPG RapidHRV estimates and a visually inspected ECG analysis across different activities.
 ](https://github.com/peterakirk/RapidHRV/blob/main/Images/Wrist_PPG_benchmarking.png?raw=true)
@@ -136,6 +136,7 @@ estimates (BPM ICC > .90; .57 < RMSSD ICC < .82) derived from an automated analy
 Massive thanks to Alex Davidson Bryan for helping publish the package and Kaarina Aho for statistical consultation. 
 Appreciation goes to other open-source analysis software, namely `Systole` [@Legrand:2021] and `HeartPy` 
 [@van_Gent:2019], which helped inspire the development of `RapidHRV`. Finally, thank you to Russell Kirk for 
-advice on deriving motion estimates.
+advice on deriving accelerometer motion estimates. This work was supported by the Leverhulme Trust as part of the 
+Doctoral Training Program for the Ecological Study of the Brain (DS-2017-026).
 
 # References
