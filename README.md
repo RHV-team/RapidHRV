@@ -1,4 +1,4 @@
-![Logo](./Images/Logo.png?raw=true)
+![Logo](https://github.com/peterakirk/RapidHRV/blob/main/Images/Logo.png?raw=true)
 
 RapidHRV is a Python pipeline for the analysis and visualization of cardiac data
 (validated on ECG, Pulse Oximetry, and PPG).
@@ -18,7 +18,8 @@ pip install rapidhrv
 ## Usage
 
 RapidHRV comes with three modules, each of which requires one function to run.
-For a step-by-step tutorial, see [Tutorial.md](./Tutorial/Tutorial.md).
+For a step-by-step tutorial, see
+[Tutorial.md](https://github.com/peterakirk/RapidHRV/blob/main/Tutorial/Tutorial.md).
 
 ```python
 from rapidhrv import preprocess, analyze, visualize
@@ -36,7 +37,7 @@ fig = visualize.Visualize(inputdata=procData, inputframe=analyzedData)
 Based on our validation paper (https://psyarxiv.com/3ewgz/),
 we make the following modality-specific suggestions as starting points for function arguments.
 
-![Suggestions](./Images/Modality_suggestions.png?raw=true)
+![Suggestions](https://github.com/peterakirk/RapidHRV/blob/main/Images/Modality_suggestions.png?raw=true)
 
 ## Interactive Visualizations
 
