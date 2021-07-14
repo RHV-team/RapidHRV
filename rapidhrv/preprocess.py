@@ -16,8 +16,10 @@ def cubic_spline_interpolation(
 
     new_size = (resample_rate / sampling_rate) * input_data.size
     # @PeterKirk
-    # I have compared the output of this function to that of the FITPACK fns used previously and they are equivalent
-    # Documentation suggests using this method over the FITPACK version in modern code (see splev docs)
+    # I have compared the output of this function to that of the FITPACK fns used previously
+    # and they are equivalent
+    # Documentation suggests using this method over the FITPACK version in modern code
+    # (see splev docs)
     b_spline = interpolate.make_interp_spline(
         np.linspace(0, new_size, input_data.size), input_data
     )
@@ -36,9 +38,7 @@ def butterworth_filter(
     # Documentation says it is more stable, but it produces slightly different results
     # Also, the following pycharm inspection suppression is no longer required with sos
     # noinspection PyTupleAssignmentBalance
-    b, a = signal.butter(
-        N=5, Wn=(cutoff_freq / nyquist_freq), btype=filter_type, output="ba"
-    )
+    b, a = signal.butter(N=5, Wn=(cutoff_freq / nyquist_freq), btype=filter_type, output="ba")
     return signal.filtfilt(b, a, input_data)
 
 
@@ -72,7 +72,9 @@ def preprocess(
     """Prepares cardiac data for analysis using global functions.
 
     Applies in order:
-    cubic spline interpolation, highpass and lowpass Butterworth filters and Savitzky-Golay smoothing.
+    cubic spline interpolation,
+    highpass and lowpass Butterworth filters
+    and Savitzky-Golay smoothing.
 
     Parameters set to None imply that aspect of the pipeline will not be applied.
     For example, the default value for `lowpass_cutoff` is None,
@@ -83,12 +85,13 @@ def preprocess(
     input_data : array_like
         Cardiac data to be processed.
     sampling_rate : int
-        Sampling rate of `input_data` in Hertz.
+        Sampling rate of `input_data` in hertz.
     resample_rate : int, default: 1000
-        If greater than `sampling_rate`, will be used as target sample rate for cubic spline interpolation.
+        If greater than `sampling_rate`,
+        will be used as the target sample rate (hertz) for cubic spline interpolation.
         Must be divisible by `sampling_rate`.
     highpass_cutoff : float, default: 0.5
-        Butterworth highpass filter cutoff frequency in Hertz.
+        Butterworth highpass filter cutoff frequency in hertz.
     lowpass_cutoff : float, optional
         Butterworth lowpass filter cutoff frequency in Hertz, filter is off by default.
     sg_settings : (int, int), default: (3, 100)
