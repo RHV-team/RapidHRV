@@ -26,6 +26,16 @@ import rapidhrv
 ...
 ```
 
+## Development
+
+In order to get a working development environment,
+please install [Poetry](https://python-poetry.org/) for your platform,
+and run `poetry install`.
+
+On MacOS, you may need to `export SYSTEM_VERSION_COMPAT=1` before `poetry install`ing.
+Read [this blog post](https://eclecticlight.co/2020/08/13/macos-version-numbering-isnt-so-simple/)
+for more details on why.
+
 ## Documentation
 
 WIP: We will use https://readthedocs.org/ and sphinx to document the library
