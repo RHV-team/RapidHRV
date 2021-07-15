@@ -22,7 +22,7 @@ class OutlierDetectionSettings:
     def from_method(
         cls, method: Literal["liberal", "moderate", "conservative"]
     ) -> OutlierDetectionSettings:
-        """Generate settings from method name
+        """Generate settings from method name.
 
         Method names are: "liberal", "moderate", "conservative".
         "conservative" is the most stringent, "liberal" is the least and "moderate" is in-between.
@@ -73,6 +73,7 @@ def analyze(
     ecg_prt_clustering: bool, default: False
         Use k-means clustering to detect P, R and T waves in the data.
         Useful for atypical morphologies (e.g. T amplitude > R amplitude).
+        If enabled, `amplitude_threshold` and `distance_threshold` will be ignored.
     amplitude_threshold: int, default: 50
         Minimum signal amplitude for a peak to be registered.
         For PPG data, the recommended value is 30.
@@ -86,10 +87,17 @@ def analyze(
         Accepts either an `OutlierDetectionSettings` object, or a string specifying a method.
         Refer to :class:`OutlierDetectionSettings` for details.
 
-
     Returns
     -------
-    pandas DataFrame
-        Extracted heart data.
+    Dataframe containing Extracted heart data.
     """
+    # validate arguments
+    if n_required_peaks < 3:
+        raise ValueError("Parameter 'n_required_peaks' must be greater than three.")
+
+    for sample_start in np.arange(
+        0, input_data.size, (window_width + window_overlap) * sampling_rate
+    ):
+        print(sample_start)
+
     pass
