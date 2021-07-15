@@ -14,16 +14,15 @@ def cubic_spline_interpolation(
             f"{resample_rate % sampling_rate = } must be zero."
         )
 
-    new_size = (resample_rate / sampling_rate) * input_data.size
+    sample_ratio = resample_rate / sampling_rate
+    result_size = input_data.size * sample_ratio
     # @PeterKirk
     # I have compared the output of this function to that of the FITPACK fns used previously
     # and they are equivalent
     # Documentation suggests using this method over the FITPACK version in modern code
     # (see splev docs)
-    b_spline = interpolate.make_interp_spline(
-        np.linspace(0, new_size, input_data.size), input_data
-    )
-    return b_spline(np.arange(0, new_size))
+    b_spline = interpolate.make_interp_spline(np.arange(0, result_size, sample_ratio), input_data)
+    return b_spline(np.arange(0, result_size))
 
 
 def butterworth_filter(
@@ -37,22 +36,24 @@ def butterworth_filter(
     # Consider maybe using sos filter type?
     # Documentation says it is more stable, but it produces slightly different results
     # Also, the following pycharm inspection suppression is no longer required with sos
-    # noinspection PyTupleAssignmentBalance
-    b, a = signal.butter(N=5, Wn=(cutoff_freq / nyquist_freq), btype=filter_type, output="ba")
-    return signal.filtfilt(b, a, input_data)
+    # Follow-up: when preceded by interpolation, results differ from original results even with b, a filter
+    # Likely due to aforementioned numerical inconsistencies. Differences are small though,
+    # 1.3e-6 avg and and 2.9e-3 99th percentile difference in abs value from output of original pipeline
+    sos = signal.butter(N=5, Wn=(cutoff_freq / nyquist_freq), btype=filter_type, output="sos")
+    return signal.sosfiltfilt(sos, input_data)
 
 
 def sg_filter(
     input_data: np.ndarray, sampling_rate: int, sg_settings: tuple[int, int]
 ) -> np.ndarray:
-    smoothing_window_ms, poly_order = sg_settings
+    poly_order, smoothing_window_ms = sg_settings
     # @PeterKirk
     # You may have had a bit of a bug... remember, x / (x / y) == y
     # I think the code worked in on your test cases because your default resampling rate is 1000Hz
     # which just happens to be how many milliseconds there are in a second...
-    smoothing_window = smoothing_window_ms / 1000  # convert to seconds
-    smoothing_window *= sampling_rate  # convert to samples
-    smoothing_window = np.round(smoothing_window)
+    # convert to seconds, then samples
+    smoothing_window = (smoothing_window_ms / 1000) * sampling_rate
+    smoothing_window = round(smoothing_window)
 
     # smoothing_window must be odd
     if smoothing_window % 2 == 0:

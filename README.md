@@ -36,6 +36,13 @@ On MacOS, you may need to `export SYSTEM_VERSION_COMPAT=1` before `poetry instal
 Read [this blog post](https://eclecticlight.co/2020/08/13/macos-version-numbering-isnt-so-simple/)
 for more details on why.
 
+This project uses [Git LFS](git-lfs.github.com),
+please install it for your platform before using the provided data files. 
+Run `git lfs checkout` after installing to populate the data files.
+
+If you plan on making any changes to the included notebooks,
+please run `nbstripout --install` from within the poetry venv before committing any changes.
+
 ## Documentation
 
 WIP: We will use https://readthedocs.org/ and sphinx to document the library
