@@ -21,10 +21,17 @@ pip install rapidhrv
 ## Usage
 
 ```python
+import numpy as np
 import rapidhrv
 
-...
+my_data = np.load("my_data.npy")
+preprocessed = rapidhrv.preprocess(my_data, sampling_rate=500)
+result = rapidhrv.analyze(preprocessed, sampling_rate=1000)  # preprocess interpolates data by default
 ```
+
+## Documentation
+
+WIP: We will use https://readthedocs.org/ and sphinx to document the library
 
 ## Development
 
@@ -37,7 +44,7 @@ Read [this blog post](https://eclecticlight.co/2020/08/13/macos-version-numberin
 for more details on why.
 
 This project uses [Git LFS](git-lfs.github.com),
-please install it for your platform before using the provided data files. 
+please install it for your platform before using the provided data files.
 Run `git lfs checkout` after installing to populate the data files.
 
 If you plan on making any changes to the included notebooks,
@@ -46,6 +53,3 @@ please run `nbstripout --install` from within the poetry venv before committing 
 To run said notebooks from the environment provided by poetry,
 install the required dependencies with `poetry install --extras notebooks`.
 
-## Documentation
-
-WIP: We will use https://readthedocs.org/ and sphinx to document the library
