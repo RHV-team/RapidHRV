@@ -20,13 +20,18 @@ pip install rapidhrv
 
 ## Usage
 
+Given a numpy array, or something convertable to it (such as a list),
+`rapidhrv.preprocess` can generate input suitable for analysis with
+`rapidhrv.analyze`, which will return a pandas dataframe containing HRV data.
+
 ```python
 import numpy as np
 import rapidhrv
 
 my_data = np.load("my_data.npy")
 preprocessed = rapidhrv.preprocess(my_data, sampling_rate=500)
-result = rapidhrv.analyze(preprocessed, sampling_rate=1000)  # preprocess interpolates data by default
+# preprocess may interpolate data, check the docstring on `rapidhrv.preprocess`
+result = rapidhrv.analyze(preprocessed, sampling_rate=1000)
 ```
 
 ## Documentation
