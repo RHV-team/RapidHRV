@@ -11,54 +11,6 @@ import sklearn.preprocessing
 from .data import OutlierDetectionSettings, Signal
 
 
-def peak_detection(
-    segment: np.ndarray, distance: int, prominence: int, use_clustering: bool
-) -> tuple[np.ndarray, dict]:
-    """Returns the indexes of detected peaks and associated properties."""
-    peaks, properties = scipy.signal.find_peaks(
-        segment, distance=distance, prominence=prominence, height=0, width=0
-    )
-    n_peaks = len(peaks)
-
-    # Attempt to determine correct peaks by distinguishing the R wave from P and T waves
-    # @PeterKirk, which type of wave is this trying to determine?
-    if len(peaks) >= 3 and use_clustering:
-        kmeans = sklearn.cluster.KMeans(n_clusters=3).fit(
-            np.column_stack(
-                (properties["widths"], properties["peak_heights"], properties["prominences"])
-            )
-        )
-
-        # Use width centroids to determine correct wave (least width, most prominence)
-        # If the two lowest values are too close (< 5), use prominence to distinguish them
-        width_cen = kmeans.cluster_centers_[:, 0]
-        labels_sort_width = np.argsort(width_cen)
-        if width_cen[labels_sort_width[1]] - width_cen[labels_sort_width[0]] < 5:
-            # Label of maximum prominence for lowest two widths
-            prom_cen = kmeans.cluster_centers_[:, 2]
-            wave_label = np.argsort(prom_cen[labels_sort_width[:2]])[1]
-        else:
-            wave_label = labels_sort_width[0]
-
-        is_wave_peak = kmeans.labels_ == wave_label
-
-        wave_peaks = peaks[is_wave_peak]
-        wave_props = {k: v[is_wave_peak] for k, v in properties.items()}
-    else:
-        wave_peaks = peaks
-        wave_props = properties
-
-    # @PeterKirk does this need to be > 3 or >= 3?
-    # Also, should this potentially be done before clustering?
-    if len(peaks) > 3:
-        # Approximate prominences at edges of window
-        base_height = segment[wave_peaks] - wave_props["prominences"]
-        wave_props["prominences"][0] = wave_props["peak_heights"][0] - base_height[1]
-        wave_props["prominences"][-1] = wave_props["peak_heights"][-1] - base_height[-2]
-
-    return wave_peaks, wave_props
-
-
 def analyze(
     signal: Signal,
     window_width: int = 10,
@@ -132,4 +84,63 @@ def analyze(
         normalized = sklearn.preprocessing.minmax_scale(segment, (0, 100))
         peaks, properties = peak_detection(normalized, distance, prominence, ecg_prt_clustering)
 
+        if len(peaks) > n_required_peaks:
+            bpm = ((len(peaks) - 1) / ((peaks[-1] - peaks[0]) / signal.sample_rate)) * 60
+
+            ibi = np.diff(peaks) * 1000 / signal.sample_rate
+            sdnn = np.std(ibi)
+            rmssd = np.sqrt(np.mean(np.square(np.diff(ibi))))
+        else:
+            bpm = np.nan
+            sdnn = np.nan
+            rmssd = np.nan
+
     pass
+
+
+def peak_detection(
+    segment: np.ndarray, distance: int, prominence: int, use_clustering: bool
+) -> tuple[np.ndarray, dict]:
+    """Returns the indexes of detected peaks and associated properties."""
+    peaks, properties = scipy.signal.find_peaks(
+        segment, distance=distance, prominence=prominence, height=0, width=0
+    )
+    n_peaks = len(peaks)
+
+    # Attempt to determine correct peaks by distinguishing the R wave from P and T waves
+    # @PeterKirk, which type of wave is this trying to determine?
+    if len(peaks) >= 3 and use_clustering:
+        kmeans = sklearn.cluster.KMeans(n_clusters=3).fit(
+            np.column_stack(
+                (properties["widths"], properties["peak_heights"], properties["prominences"])
+            )
+        )
+
+        # Use width centroids to determine correct wave (least width, most prominence)
+        # If the two lowest values are too close (< 5), use prominence to distinguish them
+        width_cen = kmeans.cluster_centers_[:, 0]
+        labels_sort_width = np.argsort(width_cen)
+        if width_cen[labels_sort_width[1]] - width_cen[labels_sort_width[0]] < 5:
+            # Label of maximum prominence for lowest two widths
+            prom_cen = kmeans.cluster_centers_[:, 2]
+            wave_label = np.argsort(prom_cen[labels_sort_width[:2]])[1]
+        else:
+            wave_label = labels_sort_width[0]
+
+        is_wave_peak = kmeans.labels_ == wave_label
+
+        wave_peaks = peaks[is_wave_peak]
+        wave_props = {k: v[is_wave_peak] for k, v in properties.items()}
+    else:
+        wave_peaks = peaks
+        wave_props = properties
+
+    # @PeterKirk does this need to be > 3 or >= 3?
+    # Also, should this potentially be done before clustering?
+    if len(peaks) > 3:
+        # Approximate prominences at edges of window
+        base_height = segment[wave_peaks] - wave_props["prominences"]
+        wave_props["prominences"][0] = wave_props["peak_heights"][0] - base_height[1]
+        wave_props["prominences"][-1] = wave_props["peak_heights"][-1] - base_height[-2]
+
+    return wave_peaks, wave_props
