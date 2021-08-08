@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 import numpy as np
 import numpy.typing
-from scipy import interpolate, signal  # type: ignore
+from scipy import interpolate, signal
 
 
 def cubic_spline_interpolation(

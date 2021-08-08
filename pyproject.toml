@@ -5,8 +5,12 @@ description = "A package for preprocessing, analyzing and visualizing cardiac da
 authors = ["Peter Kirk <p.kirk@ucl.ac.uk>"]
 license = "MIT"
 
-[mypy]
+[tool.mypy]
 plugins = "numpy.typing.mypy_plugin"
+
+[[tool.mypy.overrides]]
+module = ["scipy", "pandas"]
+ignore_missing_imports = true
 
 [tool.black]
 line-length = 99

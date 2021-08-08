@@ -5,7 +5,7 @@ from typing import Literal, Union
 
 import numpy as np
 import numpy.typing
-import pandas as pd  # type: ignore
+import pandas as pd
 
 
 @dataclasses.dataclass
@@ -95,9 +95,7 @@ def analyze(
     if n_required_peaks < 3:
         raise ValueError("Parameter 'n_required_peaks' must be greater than three.")
 
-    print((window_width - window_overlap) * sampling_rate)
     for sample_start in range(0, input_data.size, (window_width - window_overlap) * sampling_rate):
         segment = input_data[sample_start : sample_start + (window_width * sampling_rate)]
-        print(segment.size)
 
     pass
