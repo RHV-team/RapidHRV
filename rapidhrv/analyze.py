@@ -1,46 +1,33 @@
-from __future__ import annotations
-
 import dataclasses
-from typing import Literal, Union
+from typing import Union
 
 import numpy as np
 import numpy.typing
 import pandas as pd
+import scipy.signal
+
+from .data import OutlierDetectionSettings
 
 
-@dataclasses.dataclass
-class OutlierDetectionSettings:
-    """Settings for outlier detection."""
+def normalize(segment: np.ndarray) -> np.ndarray:
+    """Scale all input to be between 0 and 1."""
+    min_ = np.min(segment)
+    max_ = np.max(segment)
+    return (segment - min_) / (max_ - min_)
 
-    bpm_range: tuple[int, int]
-    rmssd_range: tuple[int, int]
-    mad: int
-    ibi_mad: int
-    min_inter_peak_distance: float = 0.5
 
-    @classmethod
-    def from_method(
-        cls, method: Literal["liberal", "moderate", "conservative"]
-    ) -> OutlierDetectionSettings:
-        """Generate settings from method name.
+def peak_detection(
+    segment: np.ndarray, distance: int, prominance: int, k: int
+) -> tuple[np.ndarray, dict]:
+    """Returns the indexes of detected peaks and associated properties."""
+    peaks, properties = scipy.signal.find_peaks(
+        segment, distance=distance, prominance=prominance, height=0, width=0
+    )
+    print(properties)
+    n_peaks = len(peaks)
 
-        Method names are: "liberal", "moderate", "conservative".
-        "conservative" is the most stringent, "liberal" is the least and "moderate" is in-between.
-        """
-        if method == "liberal":
-            return OutlierDetectionSettings(
-                bpm_range=(20, 200), rmssd_range=(0, 300), mad=7, ibi_mad=7
-            )
-        elif method == "moderate":
-            return OutlierDetectionSettings(
-                bpm_range=(30, 190), rmssd_range=(5, 262), mad=5, ibi_mad=5
-            )
-        elif method == "conservative":
-            return OutlierDetectionSettings(
-                bpm_range=(40, 180), rmssd_range=(10, 200), mad=4, ibi_mad=4
-            )
-        else:
-            raise RuntimeError(f"Invalid outlier detection method: {method}.")
+    if len(peaks) >= 3 and k > 1:
+        clustering_data = np.empty((len(peaks), 3))
 
 
 def analyze(
@@ -91,11 +78,31 @@ def analyze(
     -------
     Dataframe containing Extracted heart data.
     """
-    # validate arguments
+    # Validate arguments
+    outlier_detection_settings = (
+        OutlierDetectionSettings.from_method(outlier_detection)
+        if isinstance(outlier_detection, str)
+        else outlier_detection
+    )
+
     if n_required_peaks < 3:
         raise ValueError("Parameter 'n_required_peaks' must be greater than three.")
 
+    # Peak detection settings
+    if ecg_prt_clustering:
+        distance = 1
+        prominance = 5
+        k = 3
+    else:
+        distance = distance_threshold
+        prominance = amplitude_threshold
+        k = 1
+
+    # Windowing function
     for sample_start in range(0, input_data.size, (window_width - window_overlap) * sampling_rate):
         segment = input_data[sample_start : sample_start + (window_width * sampling_rate)]
+        normalized = normalize(segment) * 100
+        peak_detection(segment, distance=distance, prominance=prominance, k=k)
+        break
 
     pass
