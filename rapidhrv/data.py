@@ -50,6 +50,9 @@ class Signal:
     data: np.ndarray
     sample_rate: int
 
+    def __post_init__(self):
+        self.data = self.data if isinstance(self.data, np.ndarray) else np.array(self.data)
+
     def save(self, filename: str) -> None:
         """Save as filename.hdf5"""
         with h5py.File(filename, "w") as f:
@@ -61,6 +64,6 @@ class Signal:
         """Load from filename.hdf5"""
         with h5py.File(filename, "r") as f:
             return cls(
-                data=np.array(f["data"]),
+                data=f["data"],
                 sample_rate=int(f.attrs["sample_rate"]),
             )

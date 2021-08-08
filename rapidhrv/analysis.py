@@ -5,34 +5,62 @@ import numpy as np
 import numpy.typing
 import pandas as pd
 import scipy.signal
+import sklearn.cluster
+import sklearn.preprocessing
 
-from .data import OutlierDetectionSettings
-
-
-def normalize(segment: np.ndarray) -> np.ndarray:
-    """Scale all input to be between 0 and 1."""
-    min_ = np.min(segment)
-    max_ = np.max(segment)
-    return (segment - min_) / (max_ - min_)
+from .data import OutlierDetectionSettings, Signal
 
 
 def peak_detection(
-    segment: np.ndarray, distance: int, prominance: int, k: int
+    segment: np.ndarray, distance: int, prominence: int, use_clustering: bool
 ) -> tuple[np.ndarray, dict]:
     """Returns the indexes of detected peaks and associated properties."""
     peaks, properties = scipy.signal.find_peaks(
-        segment, distance=distance, prominance=prominance, height=0, width=0
+        segment, distance=distance, prominence=prominence, height=0, width=0
     )
-    print(properties)
     n_peaks = len(peaks)
 
-    if len(peaks) >= 3 and k > 1:
-        clustering_data = np.empty((len(peaks), 3))
+    # Attempt to determine correct peaks by distinguishing the R wave from P and T waves
+    # @PeterKirk, which type of wave is this trying to determine?
+    if len(peaks) >= 3 and use_clustering:
+        kmeans = sklearn.cluster.KMeans(n_clusters=3).fit(
+            np.column_stack(
+                (properties["widths"], properties["peak_heights"], properties["prominences"])
+            )
+        )
+
+        # Use width centroids to determine correct wave (least width, most prominence)
+        # If the two lowest values are too close (< 5), use prominence to distinguish them
+        width_cen = kmeans.cluster_centers_[:, 0]
+        labels_sort_width = np.argsort(width_cen)
+        if width_cen[labels_sort_width[1]] - width_cen[labels_sort_width[0]] < 5:
+            # Label of maximum prominence for lowest two widths
+            prom_cen = kmeans.cluster_centers_[:, 2]
+            wave_label = np.argsort(prom_cen[labels_sort_width[:2]])[1]
+        else:
+            wave_label = labels_sort_width[0]
+
+        is_wave_peak = kmeans.labels_ == wave_label
+
+        wave_peaks = peaks[is_wave_peak]
+        wave_props = {k: v[is_wave_peak] for k, v in properties.items()}
+    else:
+        wave_peaks = peaks
+        wave_props = properties
+
+    # @PeterKirk does this need to be > 3 or >= 3?
+    # Also, should this potentially be done before clustering?
+    if len(peaks) > 3:
+        # Approximate prominences at edges of window
+        base_height = segment[wave_peaks] - wave_props["prominences"]
+        wave_props["prominences"][0] = wave_props["peak_heights"][0] - base_height[1]
+        wave_props["prominences"][-1] = wave_props["peak_heights"][-1] - base_height[-2]
+
+    return wave_peaks, wave_props
 
 
 def analyze(
-    input_data: np.ndarray,
-    sampling_rate: int,
+    signal: Signal,
     window_width: int = 10,
     window_overlap: int = 0,
     ecg_prt_clustering: bool = False,
@@ -91,18 +119,17 @@ def analyze(
     # Peak detection settings
     if ecg_prt_clustering:
         distance = 1
-        prominance = 5
-        k = 3
+        prominence = 5
     else:
-        distance = distance_threshold
-        prominance = amplitude_threshold
-        k = 1
+        distance = int((distance_threshold / 1000) * signal.sample_rate)
+        prominence = amplitude_threshold
 
     # Windowing function
-    for sample_start in range(0, input_data.size, (window_width - window_overlap) * sampling_rate):
-        segment = input_data[sample_start : sample_start + (window_width * sampling_rate)]
-        normalized = normalize(segment) * 100
-        peak_detection(segment, distance=distance, prominance=prominance, k=k)
-        break
+    for sample_start in range(
+        0, len(signal.data), (window_width - window_overlap) * signal.sample_rate
+    ):
+        segment = signal.data[sample_start : sample_start + (window_width * signal.sample_rate)]
+        normalized = sklearn.preprocessing.minmax_scale(segment, (0, 100))
+        peaks, properties = peak_detection(normalized, distance, prominence, ecg_prt_clustering)
 
     pass

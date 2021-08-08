@@ -9,7 +9,7 @@ license = "MIT"
 plugins = "numpy.typing.mypy_plugin"
 
 [[tool.mypy.overrides]]
-module = ["scipy.*", "pandas", "h5py"]
+module = ["scipy.*", "sklearn.*", "pandas", "h5py"]
 ignore_missing_imports = true
 
 [tool.black]
