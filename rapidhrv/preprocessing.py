@@ -2,7 +2,6 @@ import dataclasses
 from typing import Literal, Optional
 
 import numpy as np
-import numpy.typing
 import scipy.interpolate
 import scipy.signal
 

@@ -8,6 +8,7 @@ Please provide credit where appropriate:
 Kirk, P. A., Garfinkel, S., & Robinson, O. J. (2021).
 _RapidHRV: An open-source toolbox for extracting heart rate and heart rate variability_
 ([PsyArXiv](https://doi.org/10.31234/osf.io/3ewgz.))
+<!-- TODO: fix PsyArXiv link -->
 
 This library is distributed under an 
 [MIT License](https://raw.githubusercontent.com/peterakirk/RapidHRV/main/LICENSE)
@@ -48,9 +49,9 @@ On MacOS, you may need to `export SYSTEM_VERSION_COMPAT=1` before running `poetr
 Read [this blog post](https://eclecticlight.co/2020/08/13/macos-version-numbering-isnt-so-simple/)
 for more details on why.
 
-This project uses [Git LFS](git-lfs.github.com),
+This project uses [Git LFS](https://git-lfs.github.com),
 please install it for your platform before using the provided data files.
-Run `git lfs checkout` after installing to populate the data files.
+Run `git lfs fetch && git lfs checkout` after installing to populate the data files.
 
 If you plan on making any changes to the included notebooks,
 please run `nbstripout --install` from within the poetry venv before committing any changes.

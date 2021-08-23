@@ -1,10 +1,9 @@
-import dataclasses
 from typing import Union
 
 import numpy as np
-import numpy.typing
 import pandas as pd
 import scipy.signal
+import scipy.stats
 import sklearn.cluster
 import sklearn.preprocessing
 
@@ -19,7 +18,7 @@ def analyze(
     amplitude_threshold: int = 50,
     distance_threshold: int = 250,
     n_required_peaks: int = 3,
-    outlier_detection: Union[str, OutlierDetectionSettings] = "moderate",
+    outlier_detection_settings: Union[str, OutlierDetectionSettings] = "moderate",
 ) -> pd.DataFrame:
     """Analyzes cardiac data.
 
@@ -27,11 +26,8 @@ def analyze(
 
     Parameters
     ----------
-    input_data : array_like
-        Cardiac data to be analyzed.
-    sampling_rate : int
-        Sampling rate of `input_data` in hertz.
-        If the signal was previously up-sampled use the new sampling rate, not the original.
+    signal : Signal
+        Cardiac signal to be analyzed.
     window_width : int, default: 10
         Width of the sliding window in seconds.
     window_overlap: int, default: 0
@@ -49,7 +45,7 @@ def analyze(
     n_required_peaks: int, default: 3
         Minimum number of peaks in a window required to record analysis for that window.
         Values less than three are invalid.
-    outlier_detection: str or OutlierDetectionSettings, default: "moderate"
+    outlier_detection_settings: str or OutlierDetectionSettings, default: "moderate"
         Settings for the Outlier detection algorithm.
         Accepts either an `OutlierDetectionSettings` object, or a string specifying a method.
         Refer to :class:`OutlierDetectionSettings` for details.
@@ -60,9 +56,9 @@ def analyze(
     """
     # Validate arguments
     outlier_detection_settings = (
-        OutlierDetectionSettings.from_method(outlier_detection)
-        if isinstance(outlier_detection, str)
-        else outlier_detection
+        OutlierDetectionSettings.from_method(outlier_detection_settings)
+        if isinstance(outlier_detection_settings, str)
+        else outlier_detection_settings
     )
 
     if n_required_peaks < 3:
@@ -77,25 +73,45 @@ def analyze(
         prominence = amplitude_threshold
 
     # Windowing function
+    results = []
     for sample_start in range(
         0, len(signal.data), (window_width - window_overlap) * signal.sample_rate
     ):
+        timestamp = sample_start / signal.sample_rate
+
         segment = signal.data[sample_start : sample_start + (window_width * signal.sample_rate)]
         normalized = sklearn.preprocessing.minmax_scale(segment, (0, 100))
         peaks, properties = peak_detection(normalized, distance, prominence, ecg_prt_clustering)
 
-        if len(peaks) > n_required_peaks:
-            bpm = ((len(peaks) - 1) / ((peaks[-1] - peaks[0]) / signal.sample_rate)) * 60
+        ibi = np.diff(peaks) * 1000 / signal.sample_rate
 
-            ibi = np.diff(peaks) * 1000 / signal.sample_rate
-            sdnn = np.std(ibi)
-            rmssd = np.sqrt(np.mean(np.square(np.diff(ibi))))
+        if len(peaks) <= n_required_peaks:
+            results.append(np.array([timestamp, *[np.nan] * 6]))
         else:
-            bpm = np.nan
-            sdnn = np.nan
-            rmssd = np.nan
+            bpm = ((len(peaks) - 1) / ((peaks[-1] - peaks[0]) / signal.sample_rate)) * 60
+            rmssd = np.sqrt(np.mean(np.square(np.diff(ibi))))
+            sdnn = np.std(ibi)
 
-    pass
+            is_outlier = outlier_detection(
+                peaks,
+                properties,
+                ibi,
+                signal.sample_rate,
+                window_width,
+                bpm,
+                rmssd,
+                outlier_detection_settings,
+            )
+
+            if is_outlier:
+                results.append([timestamp, bpm, np.nan, rmssd, np.nan, sdnn, np.nan])
+            else:
+                results.append([timestamp, bpm, bpm, rmssd, rmssd, sdnn, sdnn])
+
+    return pd.DataFrame(
+        results,
+        columns=["Time", "BPM", "CleanedBPM", "RMSSD", "CleanedRMSSD", "SDNN", "CleanedSDNN"],
+    )
 
 
 def peak_detection(
@@ -105,12 +121,11 @@ def peak_detection(
     peaks, properties = scipy.signal.find_peaks(
         segment, distance=distance, prominence=prominence, height=0, width=0
     )
-    n_peaks = len(peaks)
 
     # Attempt to determine correct peaks by distinguishing the R wave from P and T waves
     # @PeterKirk, which type of wave is this trying to determine?
     if len(peaks) >= 3 and use_clustering:
-        kmeans = sklearn.cluster.KMeans(n_clusters=3).fit(
+        k_means = sklearn.cluster.KMeans(n_clusters=3).fit(
             np.column_stack(
                 (properties["widths"], properties["peak_heights"], properties["prominences"])
             )
@@ -118,16 +133,16 @@ def peak_detection(
 
         # Use width centroids to determine correct wave (least width, most prominence)
         # If the two lowest values are too close (< 5), use prominence to distinguish them
-        width_cen = kmeans.cluster_centers_[:, 0]
+        width_cen = k_means.cluster_centers_[:, 0]
         labels_sort_width = np.argsort(width_cen)
         if width_cen[labels_sort_width[1]] - width_cen[labels_sort_width[0]] < 5:
             # Label of maximum prominence for lowest two widths
-            prom_cen = kmeans.cluster_centers_[:, 2]
+            prom_cen = k_means.cluster_centers_[:, 2]
             wave_label = np.argsort(prom_cen[labels_sort_width[:2]])[1]
         else:
             wave_label = labels_sort_width[0]
 
-        is_wave_peak = kmeans.labels_ == wave_label
+        is_wave_peak = k_means.labels_ == wave_label
 
         wave_peaks = peaks[is_wave_peak]
         wave_props = {k: v[is_wave_peak] for k, v in properties.items()}
@@ -137,10 +152,53 @@ def peak_detection(
 
     # @PeterKirk does this need to be > 3 or >= 3?
     # Also, should this potentially be done before clustering?
-    if len(peaks) > 3:
+    if len(wave_peaks) > 3:
         # Approximate prominences at edges of window
         base_height = segment[wave_peaks] - wave_props["prominences"]
         wave_props["prominences"][0] = wave_props["peak_heights"][0] - base_height[1]
         wave_props["prominences"][-1] = wave_props["peak_heights"][-1] - base_height[-2]
 
     return wave_peaks, wave_props
+
+
+def outlier_detection(
+    peaks: np.ndarray,
+    peak_properties: dict,
+    ibi: np.ndarray,
+    sample_rate: int,
+    window_width: int,
+    bpm: float,
+    rmssd: float,
+    settings: OutlierDetectionSettings,
+) -> bool:
+    bpm_in_range = settings.bpm_range[0] < bpm < settings.bpm_range[1]
+    rmssd_in_range = settings.rmssd_range[0] < rmssd < settings.rmssd_range[1]
+    if not bpm_in_range and rmssd_in_range:
+        return True
+
+    max_peak_distance = (peaks[-1] - peaks[0]) / sample_rate
+    if max_peak_distance < (window_width * settings.min_total_peak_distance):
+        return True
+
+    def mad_outlier_detection(x: np.ndarray, threshold: float) -> np.ndarray:
+        x = x - np.mean(x)
+        mad = scipy.stats.median_abs_deviation(x) * threshold
+        return (x > mad) | (x < -mad)
+
+    prominence_outliers = mad_outlier_detection(
+        peak_properties["prominences"], settings.mad_threshold
+    )
+    if np.any(prominence_outliers):
+        return True
+
+    height_outliers = mad_outlier_detection(
+        peak_properties["peak_heights"], settings.mad_threshold
+    )
+    if np.any(height_outliers):
+        return True
+
+    ibi_outliers = mad_outlier_detection(ibi, settings.ibi_mad_threshold)
+    if np.any(ibi_outliers):
+        return True
+
+    return False
