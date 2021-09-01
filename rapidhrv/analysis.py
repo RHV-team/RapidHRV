@@ -86,7 +86,7 @@ def analyze(
         ibi = np.diff(peaks) * 1000 / signal.sample_rate
 
         if len(peaks) <= n_required_peaks:
-            results.append(np.array([timestamp, *[np.nan] * 6]))
+            results.append([timestamp, *[np.nan] * 6])
         else:
             bpm = ((len(peaks) - 1) / ((peaks[-1] - peaks[0]) / signal.sample_rate)) * 60
             rmssd = np.sqrt(np.mean(np.square(np.diff(ibi))))
