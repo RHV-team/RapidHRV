@@ -79,7 +79,7 @@ def analyze(
     ):
         timestamp = sample_start / signal.sample_rate
 
-        segment = signal.data[sample_start : sample_start + (window_width * signal.sample_rate)]
+        segment = signal.data[sample_start: sample_start + (window_width * signal.sample_rate)]
         normalized = sklearn.preprocessing.minmax_scale(segment, (0, 100))
         peaks, properties = peak_detection(normalized, distance, prominence, ecg_prt_clustering)
 
@@ -94,8 +94,8 @@ def analyze(
             rmssd = np.sqrt(np.mean(np.square(sd)))
             sdnn = np.std(ibi)
             sdsd = np.std(sd)  # Standard deviation of successive differences
-            pNN20 = np.sum(sd > 20) / len(sd)  # Proportion of successive differences > 20ms
-            pNN50 = np.sum(sd > 50) / len(sd)  # Proportion of successive differences > 50ms
+            p_nn20 = np.sum(sd > 20) / len(sd)  # Proportion of successive differences > 20ms
+            p_nn50 = np.sum(sd > 50) / len(sd)  # Proportion of successive differences > 50ms
 
             # Frequency-domain metrics
             hf = frequency_domain(x=ibi, sfreq=signal.sample_rate)
@@ -112,11 +112,11 @@ def analyze(
             )
 
             if is_outlier:
-                results.append([timestamp, bpm, np.nan, rmssd, np.nan, sdnn, np.nan, sdsd, np.nan, pNN20, np.nan,
-                                pNN50, np.nan, hf, np.nan])
+                results.append([timestamp, bpm, np.nan, rmssd, np.nan, sdnn, np.nan, sdsd, np.nan, p_nn20, np.nan,
+                                p_nn50, np.nan, hf, np.nan])
             else:
-                results.append([timestamp, bpm, bpm, rmssd, rmssd, sdnn, sdnn, sdsd, sdsd, pNN20, pNN20, pNN50, pNN50,
-                                hf, hf])
+                results.append([timestamp, bpm, bpm, rmssd, rmssd, sdnn, sdnn, sdsd, sdsd, p_nn20, p_nn20, p_nn50,
+                                p_nn50, hf, hf])
 
     return pd.DataFrame(
         results,
