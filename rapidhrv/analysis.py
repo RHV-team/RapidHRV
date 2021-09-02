@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import scipy.signal
 import scipy.stats
+import scipy.interpolate
 import sklearn.cluster
 import sklearn.preprocessing
 
@@ -196,7 +197,7 @@ def frequency_domain(x, sfreq: int = 5):
     """
     # Interpolate R-R interval
     time = np.cumsum(x)
-    f = interpolate.interp1d(time, x, kind="cubic")
+    f = scipy.interpolate.interp1d(time, x, kind="cubic")
     new_time = np.arange(time[0], time[-1], 1000 / sfreq)  # sfreq = 5 Hz
     x = f(new_time)
 
@@ -206,16 +207,15 @@ def frequency_domain(x, sfreq: int = 5):
         nperseg = len(x)
 
     # Compute Power Spectral Density
-    freq, psd = welch(x=x, fs=sfreq, nperseg=nperseg, nfft=nperseg)
-
+    freq, psd = scipy.signal.welch(x=x, fs=sfreq, nperseg=nperseg, nfft=nperseg)
     psd = psd / 1000000
-
     fbands = {"hf": ("High frequency", (0.15, 0.4), "r")}
 
     # Extract HRV parameters
     ########################
     stats = pd.DataFrame([])
-    band = 'hf'
+    band = "hf"
+
     this_psd = psd[(freq >= fbands[band][1][0]) & (freq < fbands[band][1][1])]
     this_freq = freq[(freq >= fbands[band][1][0]) & (freq < fbands[band][1][1])]
 
