@@ -84,13 +84,21 @@ def analyze(
         peaks, properties = peak_detection(normalized, distance, prominence, ecg_prt_clustering)
 
         ibi = np.diff(peaks) * 1000 / signal.sample_rate
+        sd = np.diff(ibi)
 
         if len(peaks) <= n_required_peaks:
-            results.append([timestamp, *[np.nan] * 6])
+            results.append([timestamp, *[np.nan] * 12])
         else:
+            # Time-domain metrics
             bpm = ((len(peaks) - 1) / ((peaks[-1] - peaks[0]) / signal.sample_rate)) * 60
-            rmssd = np.sqrt(np.mean(np.square(np.diff(ibi))))
+            rmssd = np.sqrt(np.mean(np.square(sd)))
             sdnn = np.std(ibi)
+            sdsd = np.std(sd)  # Standard deviation of successive differences
+            pNN20 = np.sum(sd > 20) / len(sd)  # Proportion of successive differences > 20ms
+            pNN50 = np.sum(sd > 50) / len(sd)  # Proportion of successive differences > 50ms
+
+            # Frequency-domain metrics
+            hf = frequency_domain(x=ibi, sfreq=signal.sample_rate)
 
             is_outlier = outlier_detection(
                 peaks,
@@ -104,13 +112,16 @@ def analyze(
             )
 
             if is_outlier:
-                results.append([timestamp, bpm, np.nan, rmssd, np.nan, sdnn, np.nan])
+                results.append([timestamp, bpm, np.nan, rmssd, np.nan, sdnn, np.nan, sdsd, np.nan, pNN20, np.nan,
+                                pNN50, np.nan, hf, np.nan])
             else:
-                results.append([timestamp, bpm, bpm, rmssd, rmssd, sdnn, sdnn])
+                results.append([timestamp, bpm, bpm, rmssd, rmssd, sdnn, sdnn, sdsd, sdsd, pNN20, pNN20, pNN50, pNN50,
+                                hf, hf])
 
     return pd.DataFrame(
         results,
-        columns=["Time", "BPM", "CleanedBPM", "RMSSD", "CleanedRMSSD", "SDNN", "CleanedSDNN"],
+        columns=["Time", "BPM", "CleanedBPM", "RMSSD", "CleanedRMSSD", "SDNN", "CleanedSDNN", "SDSD", "CleanedSDSD",
+                 "pNN20", "CleanedPNN20", "pNN50", "CleanedPNN50", "HF", "CleanedHF"]
     )
 
 
@@ -123,7 +134,6 @@ def peak_detection(
     )
 
     # Attempt to determine correct peaks by distinguishing the R wave from P and T waves
-    # @PeterKirk, which type of wave is this trying to determine?
     if len(peaks) >= 3 and use_clustering:
         k_means = sklearn.cluster.KMeans(n_clusters=3).fit(
             np.column_stack(
@@ -159,6 +169,71 @@ def peak_detection(
         wave_props["prominences"][-1] = wave_props["peak_heights"][-1] - base_height[-2]
 
     return wave_peaks, wave_props
+
+
+def frequency_domain(x, sfreq: int = 5):
+    """ This function and docstring was modified from Systole (https://github.com/embodied-computation-group/systole)
+    Extracts the frequency domain features of heart rate variability.
+    Parameters
+    ----------
+    x : np.ndarray or list
+        Interval time-series (R-R, beat-to-beat...), in miliseconds.
+    sfreq : int
+        The sampling frequency (Hz).
+    Returns
+    -------
+    stats : :py:class:`pandas.DataFrame`
+        Frequency domain summary statistics.
+        * ``'power_hf_per'`` : High frequency power (%).
+    Notes
+    -----
+    The dataframe containing the summary statistics is returned in the long
+    format to facilitate the creation of group summary data frame that can
+    easily be transferred to other plotting or statistics library. You can
+    easily convert it into a wide format for a subject-level inline report
+    using the py:pandas.pivot_table() function:
+    >>> pd.pivot_table(stats, values='Values', columns='Metric')
+    """
+    # Interpolate R-R interval
+    time = np.cumsum(x)
+    f = interpolate.interp1d(time, x, kind="cubic")
+    new_time = np.arange(time[0], time[-1], 1000 / sfreq)  # sfreq = 5 Hz
+    x = f(new_time)
+
+    # Define window length
+    nperseg = 256 * sfreq
+    if nperseg > len(x):
+        nperseg = len(x)
+
+    # Compute Power Spectral Density
+    freq, psd = welch(x=x, fs=sfreq, nperseg=nperseg, nfft=nperseg)
+
+    psd = psd / 1000000
+
+    fbands = {"hf": ("High frequency", (0.15, 0.4), "r")}
+
+    # Extract HRV parameters
+    ########################
+    stats = pd.DataFrame([])
+    band = 'hf'
+    this_psd = psd[(freq >= fbands[band][1][0]) & (freq < fbands[band][1][1])]
+    this_freq = freq[(freq >= fbands[band][1][0]) & (freq < fbands[band][1][1])]
+
+    # Peaks (Hz)
+    peak = round(this_freq[np.argmax(this_psd)], 4)
+    stats = stats.append(
+        {"Values": peak, "Metric": band + "_peak"}, ignore_index=True
+    )
+
+    # Power (ms**2)
+    power = np.trapz(x=this_freq, y=this_psd) * 1000000
+    stats = stats.append(
+        {"Values": power, "Metric": band + "_power"}, ignore_index=True
+    )
+
+    hf = stats.Values[stats.Metric == "hf_power"].values[0]
+
+    return hf
 
 
 def outlier_detection(
