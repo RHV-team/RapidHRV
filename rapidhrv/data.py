@@ -99,6 +99,6 @@ def get_example_data():
     array_like
         example data
     """
-    url = 'https://github.com/peterakirk/RapidHRV/tree/refactor/resources/example_data.csv'
-    data = pd.read_csv(url, index_col=0, parse_dates=[0])
+    url = "https://github.com/peterakirk/RapidHRV/tree/refactor/resources/example_data.csv"
+    data = pd.read_csv(url)
     return data
