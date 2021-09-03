@@ -89,3 +89,16 @@ class Signal:
                 data=f["data"],
                 sample_rate=int(f.attrs["sample_rate"]),
             )
+
+
+def get_example_data():
+    """Function to get example data from github
+
+    Returns
+    -------
+    array_like
+        example data
+    """
+    url = 'https://github.com/peterakirk/RapidHRV/tree/refactor/resources/example_data.csv'
+    data = pd.read_csv(url, index_col=0, parse_dates=[0])
+    return data
