@@ -99,6 +99,7 @@ def get_example_data():
     array_like
         example data
     """
-    url = "https://github.com/peterakirk/RapidHRV/tree/refactor/resources/example_data.csv"
+    url = "https://raw.githubusercontent.com/peterakirk/RapidHRV/refactor/resources/example_data.csv"
     data = pd.read_csv(url)
-    return data
+    example_data = Signal(data=data, sample_rate=20)
+    return example_data
