@@ -2,9 +2,9 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
+import scipy.interpolate
 import scipy.signal
 import scipy.stats
-import scipy.interpolate
 import sklearn.cluster
 import sklearn.preprocessing
 
@@ -80,7 +80,7 @@ def analyze(
     ):
         timestamp = sample_start / signal.sample_rate
 
-        segment = signal.data[sample_start: sample_start + (window_width * signal.sample_rate)]
+        segment = signal.data[sample_start : sample_start + (window_width * signal.sample_rate)]
         normalized = sklearn.preprocessing.minmax_scale(segment, (0, 100))
         peaks, properties = peak_detection(normalized, distance, prominence, ecg_prt_clustering)
 
@@ -112,17 +112,45 @@ def analyze(
                 outlier_detection_settings,
             )
 
-            if is_outlier:
-                results.append([timestamp, bpm, np.nan, rmssd, np.nan, sdnn, np.nan, sdsd, np.nan, p_nn20, np.nan,
-                                p_nn50, np.nan, hf, np.nan])
-            else:
-                results.append([timestamp, bpm, bpm, rmssd, rmssd, sdnn, sdnn, sdsd, sdsd, p_nn20, p_nn20, p_nn50,
-                                p_nn50, hf, hf])
+            results.append(
+                [
+                    timestamp,
+                    bpm,
+                    bpm if is_outlier else np.nan,
+                    rmssd,
+                    rmssd if is_outlier else np.nan,
+                    sdnn,
+                    sdnn if is_outlier else np.nan,
+                    sdsd,
+                    sdsd if is_outlier else np.nan,
+                    p_nn20,
+                    p_nn20 if is_outlier else np.nan,
+                    p_nn50,
+                    p_nn50 if is_outlier else np.nan,
+                    hf,
+                    hf if is_outlier else np.nan,
+                ]
+            )
 
     return pd.DataFrame(
         results,
-        columns=["Time", "BPM", "CleanedBPM", "RMSSD", "CleanedRMSSD", "SDNN", "CleanedSDNN", "SDSD", "CleanedSDSD",
-                 "pNN20", "CleanedPNN20", "pNN50", "CleanedPNN50", "HF", "CleanedHF"]
+        columns=[
+            "Time",
+            "BPM",
+            "CleanedBPM",
+            "RMSSD",
+            "CleanedRMSSD",
+            "SDNN",
+            "CleanedSDNN",
+            "SDSD",
+            "CleanedSDSD",
+            "pNN20",
+            "CleanedPNN20",
+            "pNN50",
+            "CleanedPNN50",
+            "HF",
+            "CleanedHF",
+        ],
     )
 
 
@@ -173,7 +201,7 @@ def peak_detection(
 
 
 def frequency_domain(x, sfreq: int = 5):
-    """ This function and docstring was modified from Systole (https://github.com/embodied-computation-group/systole)
+    """This function and docstring was modified from Systole (https://github.com/embodied-computation-group/systole)
     Extracts the frequency domain features of heart rate variability.
     Parameters
     ----------
@@ -221,15 +249,11 @@ def frequency_domain(x, sfreq: int = 5):
 
     # Peaks (Hz)
     peak = round(this_freq[np.argmax(this_psd)], 4)
-    stats = stats.append(
-        {"Values": peak, "Metric": band + "_peak"}, ignore_index=True
-    )
+    stats = stats.append({"Values": peak, "Metric": band + "_peak"}, ignore_index=True)
 
     # Power (ms**2)
     power = np.trapz(x=this_freq, y=this_psd) * 1000000
-    stats = stats.append(
-        {"Values": power, "Metric": band + "_power"}, ignore_index=True
-    )
+    stats = stats.append({"Values": power, "Metric": band + "_power"}, ignore_index=True)
 
     hf = stats.Values[stats.Metric == "hf_power"].values[0]
 

@@ -1,13 +1,10 @@
 from __future__ import annotations
 
 import dataclasses
-import io
-import pathlib
-from typing import Union
 
 import h5py
 import numpy as np
-import numpy.typing
+import pandas as pd
 
 
 @dataclasses.dataclass
@@ -91,15 +88,12 @@ class Signal:
             )
 
 
-def get_example_data():
-    """Function to get example data from github
+def get_example_data() -> np.ndarray:
+    """Function to get example data from `OSF <https://osf.io>`
 
     Returns
     -------
     array_like
         example data
     """
-    url = "https://raw.githubusercontent.com/peterakirk/RapidHRV/refactor/resources/example_data.csv"
-    data = pd.read_csv(url)
-    example_data = Signal(data=data, sample_rate=20)
-    return example_data
+    return pd.read_csv("https://osf.io/wqnjh/download").to_numpy()[0]
