@@ -1,3 +1,5 @@
+name: Setup RapidHRV
+description: Setup RapidHRV
 runs:
   using: "composite"
   steps:
