@@ -7,8 +7,7 @@ Please provide credit where appropriate:
 
 Kirk, P. A., Garfinkel, S., & Robinson, O. J. (2021).
 _RapidHRV: An open-source toolbox for extracting heart rate and heart rate variability_
-([PsyArXiv](https://doi.org/10.31234/osf.io/3ewgz.))
-<!-- TODO: fix PsyArXiv link -->
+([PsyArXiv](https://doi.org/10.31234/osf.io/3ewgz))
 
 This library is distributed under an 
 [MIT License](https://raw.githubusercontent.com/peterakirk/RapidHRV/main/LICENSE)
