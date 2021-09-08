@@ -4,14 +4,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      - name: Install Poetry
-        run: pip install poetry
-      - name: Install Dependencies
-        run: poetry install
+      - uses: .github/actions/setup
       - name: Run Tests
         run: poetry run task test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: .github/actions/setup
+      - name: Build project
+        run: poetry build

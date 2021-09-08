@@ -1,0 +1,12 @@
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install Poetry
+      run: pip install poetry
+    - name: Install Dependencies
+      run: poetry install
