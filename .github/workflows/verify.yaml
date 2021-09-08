@@ -4,12 +4,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: ./.github/actions/setup
       - name: Run Tests
         run: poetry run task test
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: ./.github/actions/setup
       - name: Build project
         run: poetry build
