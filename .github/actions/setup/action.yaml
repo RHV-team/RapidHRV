@@ -10,6 +10,6 @@ runs:
     - name: Install Poetry
       run: pip install poetry
       shell: bash
-    - name: Install Dependencies
+    - name: Install Dependencies in Virtual Environment
       run: poetry install
       shell: bash
