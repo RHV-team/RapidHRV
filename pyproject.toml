@@ -16,9 +16,6 @@ format_isort = "isort ."
 
 [tool.mypy]
 plugins = "numpy.typing.mypy_plugin"
-
-[[tool.mypy.overrides]]
-module = ["scipy.*", "sklearn.*", "pandas", "h5py"]
 ignore_missing_imports = true
 
 [tool.black]
@@ -41,6 +38,7 @@ mypy = "^0.910"
 pytest = "^6.2.4"
 nbstripout = "^0.5.0"
 taskipy = "^1.8.1"
+flake8 = "^3.9.2"
 
 [tool.poetry.extras]
 notebooks = ["jupyter", "matplotlib"]

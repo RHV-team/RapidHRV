@@ -18,9 +18,11 @@ class OutlierDetectionSettings:
     rmssd_range:
         Range of acceptable rmssd values.
     mad_threshold:
-        Threshold (in median absolute deviation units) for peak heights and prominences to register as outliers.
+        Threshold for peak heights and prominences to register as outliers.
+        (in median absolute deviation units)
     ibi_mad_threshold:
-        Threshold (in median absolute deviation units) for peak intervals to register as an outliers.
+        Threshold for peak intervals to register as an outliers.
+        (in median absolute deviation units)
     min_total_peak_distance:
         Acceptable ratio between total width to distance between first and last peaks in window.
     """
