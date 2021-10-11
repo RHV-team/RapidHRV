@@ -201,7 +201,8 @@ def peak_detection(
 
 
 def frequency_domain(x, sfreq: int = 5):
-    """This function and docstring was modified from Systole (https://github.com/embodied-computation-group/systole)
+    """This function and docstring was modified from Systole
+    (https://github.com/embodied-computation-group/systole)
     Extracts the frequency domain features of heart rate variability.
     Parameters
     ----------

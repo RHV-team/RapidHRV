@@ -5,20 +5,22 @@ description = "A package for preprocessing, analyzing and visualizing cardiac da
 authors = ["Peter Kirk <p.kirk@ucl.ac.uk>"]
 license = "MIT"
 
-[tool.taskipy.tasks]
-test = "task test_format && task test_mypy && task test_pytest"
-test_pytest = "pytest"
-test_format = "black --check . && isort --check ."
-test_mypy = "mypy ."
-format = "task format_black && task format_isort"
-format_black = "black ."
-format_isort = "isort ."
+[tool.poe.tasks]
+format = [
+  { cmd = "black ." },
+  { cmd = "isort ." },
+]
+pytest = "pytest --cov=rapidhrv ."
+test = [
+  { cmd = "black --check ." },
+  { cmd = "isort --check ." },
+  { cmd = "flake8 ." },
+  { cmd = "mypy ." },
+  "pytest"
+]
 
 [tool.mypy]
 plugins = "numpy.typing.mypy_plugin"
-
-[[tool.mypy.overrides]]
-module = ["scipy.*", "sklearn.*", "pandas", "h5py"]
 ignore_missing_imports = true
 
 [tool.black]
@@ -40,7 +42,9 @@ isort = "^5.9.2"
 mypy = "^0.910"
 pytest = "^6.2.4"
 nbstripout = "^0.5.0"
-taskipy = "^1.8.1"
+flake8 = "^3.9.2"
+poethepoet = "^0.10.0"
+pytest-cov = "^3.0.0"
 
 [tool.poetry.extras]
 notebooks = ["jupyter", "matplotlib"]

@@ -1,0 +1,15 @@
+name: Setup RapidHRV
+description: Setup RapidHRV
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install Poetry
+      run: pip install poetry
+      shell: bash
+    - name: Install Dependencies in Virtual Environment
+      run: poetry install
+      shell: bash
