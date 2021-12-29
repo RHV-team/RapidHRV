@@ -11,6 +11,9 @@ import sklearn.preprocessing
 from .data import OutlierDetectionSettings, Signal
 
 
+DATAFRAME_COLUMNS = ["Time", "BPM", "RMSSD", "SDNN", "SDSD", "pNN20", "pNN50", "HF", "Outlier"]
+
+
 def analyze(
     signal: Signal,
     window_width: int = 10,
@@ -88,7 +91,7 @@ def analyze(
         sd = np.diff(ibi)
 
         if len(peaks) <= n_required_peaks:
-            results.append([timestamp, *[np.nan] * 12])
+            results.append([timestamp, *[np.nan] * (len(DATAFRAME_COLUMNS) - 2), True])
         else:
             # Time-domain metrics
             bpm = ((len(peaks) - 1) / ((peaks[-1] - peaks[0]) / signal.sample_rate)) * 60
@@ -116,41 +119,19 @@ def analyze(
                 [
                     timestamp,
                     bpm,
-                    bpm if is_outlier else np.nan,
                     rmssd,
-                    rmssd if is_outlier else np.nan,
                     sdnn,
-                    sdnn if is_outlier else np.nan,
                     sdsd,
-                    sdsd if is_outlier else np.nan,
                     p_nn20,
-                    p_nn20 if is_outlier else np.nan,
                     p_nn50,
-                    p_nn50 if is_outlier else np.nan,
                     hf,
-                    hf if is_outlier else np.nan,
+                    is_outlier,
                 ]
             )
 
     return pd.DataFrame(
         results,
-        columns=[
-            "Time",
-            "BPM",
-            "CleanedBPM",
-            "RMSSD",
-            "CleanedRMSSD",
-            "SDNN",
-            "CleanedSDNN",
-            "SDSD",
-            "CleanedSDSD",
-            "pNN20",
-            "CleanedPNN20",
-            "pNN50",
-            "CleanedPNN50",
-            "HF",
-            "CleanedHF",
-        ],
+        columns=DATAFRAME_COLUMNS,
     )
 
 
