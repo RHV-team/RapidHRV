@@ -5,8 +5,7 @@ import rapidhrv as rhv
 
 def test_pipeline():
     """Basic smoke test"""
-    example_data = rhv.get_example_data()
-    signal = rhv.Signal(example_data, sample_rate=20)
+    signal = rhv.get_example_data()
     preprocessed = rhv.preprocess(signal)
     result = rhv.analyze(preprocessed)
     assert result is not None
