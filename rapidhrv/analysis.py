@@ -205,7 +205,7 @@ def frequency_domain(x, sfreq: int = 5):
     using the py:pandas.pivot_table() function:
     >>> pd.pivot_table(stats, values='Values', columns='Metric')
     """
-    if x < 4:  # RapidHRV edit: Can't run with less than 4 IBIs
+    if len(x) < 4:  # RapidHRV edit: Can't run with less than 4 IBIs
         return np.nan
 
     # Interpolate R-R interval
