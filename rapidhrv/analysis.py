@@ -232,6 +232,9 @@ def frequency_domain(x, sfreq: int = 5):
     this_psd = psd[(freq >= fbands[band][1][0]) & (freq < fbands[band][1][1])]
     this_freq = freq[(freq >= fbands[band][1][0]) & (freq < fbands[band][1][1])]
 
+    if (len(this_psd) == 0) | (len(this_psd) == 0):  # RapidHRV edit: if no power
+        return np.nan
+
     # Peaks (Hz)
     peak = round(this_freq[np.argmax(this_psd)], 4)
     stats = stats.append({"Values": peak, "Metric": band + "_peak"}, ignore_index=True)
