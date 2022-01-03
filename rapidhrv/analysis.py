@@ -10,7 +10,6 @@ import sklearn.preprocessing
 
 from .data import OutlierDetectionSettings, Signal
 
-
 DATAFRAME_COLUMNS = ["Time", "BPM", "RMSSD", "SDNN", "SDSD", "pNN20", "pNN50", "HF", "Outlier"]
 
 

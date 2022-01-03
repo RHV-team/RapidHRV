@@ -2,11 +2,10 @@ import dash
 import numpy as np
 import pandas as pd
 import plotly.express as px
-from plotly import subplots
 import plotly.graph_objects as go
-
 from dash import dcc, html
 from dash.dependencies import Input, Output
+from plotly import subplots
 
 import rapidhrv as rhv
 
@@ -49,6 +48,7 @@ def plot_data(data: pd.DataFrame):
     )
 
     return fig
+
 
 def plot_signal(signal: rhv.Signal):
     pass
@@ -103,7 +103,6 @@ def create_app():
             return plot_data(pd.read_csv(filename))
         except FileNotFoundError:
             return plot_data(pd.DataFrame(columns=rhv.analysis.DATAFRAME_COLUMNS))
-
 
     return app
 
