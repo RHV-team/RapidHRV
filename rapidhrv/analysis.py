@@ -1,4 +1,3 @@
-import dataclasses
 from typing import Union
 
 import numpy as np
@@ -13,6 +12,7 @@ from .data import OutlierDetectionSettings, Signal
 
 DATA_COLUMNS = ["BPM", "RMSSD", "SDNN", "SDSD", "pNN20", "pNN50", "HF"]
 DATAFRAME_COLUMNS = ["Time", *DATA_COLUMNS, "Outlier", "Window"]
+
 
 def analyze(
     signal: Signal,
@@ -117,18 +117,7 @@ def analyze(
             )
 
             results.append(
-                [
-                    timestamp,
-                    bpm,
-                    rmssd,
-                    sdnn,
-                    sdsd,
-                    p_nn20,
-                    p_nn50,
-                    hf,
-                    is_outlier,
-                    window_data
-                ]
+                [timestamp, bpm, rmssd, sdnn, sdsd, p_nn20, p_nn50, hf, is_outlier, window_data]
             )
 
     return pd.DataFrame(

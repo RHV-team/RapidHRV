@@ -10,4 +10,4 @@ def test_pipeline():
     result = rhv.analyze(preprocessed)
     assert result is not None
     assert len(result) > 0
-    assert not np.all(np.isnan(result["CleanedBPM"]))
+    assert not np.all(np.isnan(result["BPM"]))

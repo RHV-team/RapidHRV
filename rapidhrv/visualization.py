@@ -87,7 +87,7 @@ def visualize(analyzed: pd.DataFrame, debug=False):
 
     @app.callback(Output("window-container", "children"), Input("results-graph", "clickData"))
     def update_window_graph(click_data):
-        if click_data == None:
+        if click_data is None:
             return []
 
         selected_point = click_data["points"][0]
