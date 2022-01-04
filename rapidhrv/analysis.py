@@ -260,7 +260,7 @@ def outlier_detection(
 ) -> bool:
     bpm_in_range = settings.bpm_range[0] < bpm < settings.bpm_range[1]
     rmssd_in_range = settings.rmssd_range[0] < rmssd < settings.rmssd_range[1]
-    if not bpm_in_range and rmssd_in_range:
+    if not (bpm_in_range and rmssd_in_range):
         return True
 
     max_peak_distance = (peaks[-1] - peaks[0]) / sample_rate
