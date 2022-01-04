@@ -94,6 +94,11 @@ class Signal:
         data = pd.read_csv(filename).to_numpy()[0]
         return cls(data=data, sample_rate=sample_rate)
 
+    @classmethod
+    def from_txt(cls, filename: str, sample_rate: int):
+        data = np.loadtxt(filename)
+        return cls(data=data, sample_rate=sample_rate)
+
 
 def get_example_data() -> Signal:
     """Function to get example data from `OSF <https://osf.io>`

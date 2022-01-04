@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Union
 
 import numpy as np
@@ -10,8 +11,8 @@ import sklearn.preprocessing
 
 from .data import OutlierDetectionSettings, Signal
 
-DATAFRAME_COLUMNS = ["Time", "BPM", "RMSSD", "SDNN", "SDSD", "pNN20", "pNN50", "HF", "Outlier"]
-
+DATA_COLUMNS = ["BPM", "RMSSD", "SDNN", "SDSD", "pNN20", "pNN50", "HF"]
+DATAFRAME_COLUMNS = ["Time", *DATA_COLUMNS, "Outlier", "Window"]
 
 def analyze(
     signal: Signal,
@@ -85,12 +86,13 @@ def analyze(
         segment = signal.data[sample_start : sample_start + (window_width * signal.sample_rate)]
         normalized = sklearn.preprocessing.minmax_scale(segment, (0, 100))
         peaks, properties = peak_detection(normalized, distance, prominence, ecg_prt_clustering)
+        window_data = (normalized, peaks, properties)
 
         ibi = np.diff(peaks) * 1000 / signal.sample_rate
         sd = np.diff(ibi)
 
         if len(peaks) <= n_required_peaks:
-            results.append([timestamp, *[np.nan] * (len(DATAFRAME_COLUMNS) - 2), True])
+            results.append([timestamp, *[np.nan] * len(DATA_COLUMNS), True, window_data])
         else:
             # Time-domain metrics
             bpm = ((len(peaks) - 1) / ((peaks[-1] - peaks[0]) / signal.sample_rate)) * 60
@@ -125,6 +127,7 @@ def analyze(
                     p_nn50,
                     hf,
                     is_outlier,
+                    window_data
                 ]
             )
 
