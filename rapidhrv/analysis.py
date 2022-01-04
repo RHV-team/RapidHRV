@@ -10,6 +10,9 @@ import sklearn.preprocessing
 
 from .data import OutlierDetectionSettings, Signal
 
+DATA_COLUMNS = ["BPM", "RMSSD", "SDNN", "SDSD", "pNN20", "pNN50", "HF"]
+DATAFRAME_COLUMNS = ["Time", *DATA_COLUMNS, "Outlier", "Window"]
+
 
 def analyze(
     signal: Signal,
@@ -83,12 +86,13 @@ def analyze(
         segment = signal.data[sample_start : sample_start + (window_width * signal.sample_rate)]
         normalized = sklearn.preprocessing.minmax_scale(segment, (0, 100))
         peaks, properties = peak_detection(normalized, distance, prominence, ecg_prt_clustering)
+        window_data = (normalized, peaks, properties)
 
         ibi = np.diff(peaks) * 1000 / signal.sample_rate
         sd = np.diff(ibi)
 
         if len(peaks) <= n_required_peaks:
-            results.append([timestamp, *[np.nan] * 12])
+            results.append([timestamp, *[np.nan] * len(DATA_COLUMNS), True, window_data])
         else:
             # Time-domain metrics
             bpm = ((len(peaks) - 1) / ((peaks[-1] - peaks[0]) / signal.sample_rate)) * 60
@@ -113,44 +117,12 @@ def analyze(
             )
 
             results.append(
-                [
-                    timestamp,
-                    bpm,
-                    bpm if is_outlier else np.nan,
-                    rmssd,
-                    rmssd if is_outlier else np.nan,
-                    sdnn,
-                    sdnn if is_outlier else np.nan,
-                    sdsd,
-                    sdsd if is_outlier else np.nan,
-                    p_nn20,
-                    p_nn20 if is_outlier else np.nan,
-                    p_nn50,
-                    p_nn50 if is_outlier else np.nan,
-                    hf,
-                    hf if is_outlier else np.nan,
-                ]
+                [timestamp, bpm, rmssd, sdnn, sdsd, p_nn20, p_nn50, hf, is_outlier, window_data]
             )
 
     return pd.DataFrame(
         results,
-        columns=[
-            "Time",
-            "BPM",
-            "CleanedBPM",
-            "RMSSD",
-            "CleanedRMSSD",
-            "SDNN",
-            "CleanedSDNN",
-            "SDSD",
-            "CleanedSDSD",
-            "pNN20",
-            "CleanedPNN20",
-            "pNN50",
-            "CleanedPNN50",
-            "HF",
-            "CleanedHF",
-        ],
+        columns=DATAFRAME_COLUMNS,
     )
 
 
@@ -224,6 +196,9 @@ def frequency_domain(x, sfreq: int = 5):
     using the py:pandas.pivot_table() function:
     >>> pd.pivot_table(stats, values='Values', columns='Metric')
     """
+    if len(x) < 4:  # RapidHRV edit: Can't run with less than 4 IBIs
+        return np.nan
+
     # Interpolate R-R interval
     time = np.cumsum(x)
     f = scipy.interpolate.interp1d(time, x, kind="cubic")
@@ -247,6 +222,9 @@ def frequency_domain(x, sfreq: int = 5):
 
     this_psd = psd[(freq >= fbands[band][1][0]) & (freq < fbands[band][1][1])]
     this_freq = freq[(freq >= fbands[band][1][0]) & (freq < fbands[band][1][1])]
+
+    if (len(this_psd) == 0) | (len(this_psd) == 0):  # RapidHRV edit: if no power
+        return np.nan
 
     # Peaks (Hz)
     peak = round(this_freq[np.argmax(this_psd)], 4)
@@ -273,7 +251,7 @@ def outlier_detection(
 ) -> bool:
     bpm_in_range = settings.bpm_range[0] < bpm < settings.bpm_range[1]
     rmssd_in_range = settings.rmssd_range[0] < rmssd < settings.rmssd_range[1]
-    if not bpm_in_range and rmssd_in_range:
+    if not (bpm_in_range and rmssd_in_range):
         return True
 
     max_peak_distance = (peaks[-1] - peaks[0]) / sample_rate
