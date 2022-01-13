@@ -5,7 +5,7 @@ RapidHRV is a data processing pipeline for the analysis and visualization of car
 
 Please provide credit where appropriate:
 
-Kirk, P. A., Garfinkel, S., & Robinson, O. J. (2021).
+Kirk, P. A., Davidson Bryan, A., Garfinkel, S., & Robinson, O. J. (2021).
 _RapidHRV: An open-source toolbox for extracting heart rate and heart rate variability_
 ([PsyArXiv](https://doi.org/10.31234/osf.io/3ewgz))
 
@@ -26,12 +26,12 @@ Given a numpy array, or something convertable to it (such as a list),
 
 ```python
 import numpy as np
-import rapidhrv
+import rapidhrv as rhv
 
-my_data = np.load("my_data.npy")
-preprocessed = rapidhrv.preprocess(my_data, sampling_rate=500)
-# preprocess may interpolate data, check the docstring on `rapidhrv.preprocess`
-result = rapidhrv.analyze(preprocessed, sampling_rate=1000)
+my_data = np.load("my_data.npy")  # Load data
+noise_data = rhv.Signal(my_data, sample_rate=50)  # Convert to rhv Signal class
+preprocessed = rhv.preprocess(my_data)  # Preprocess: may interpolate data, check the docstring on `rapidhrv.preprocess`
+result = rhv.analyze(preprocessed)  # Analyze signal
 ```
 
 ## Documentation
