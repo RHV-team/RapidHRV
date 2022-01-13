@@ -95,7 +95,7 @@ def visualize(analyzed: pd.DataFrame, debug=False):
 
         return [dcc.Graph(figure=window_graph(window_data))]
 
-    app.run_server(debug=debug)
+    app.run_server(debug=debug, dev_tools_silence_routes_logging=True)
 
 
 if __name__ == "__main__":
