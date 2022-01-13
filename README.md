@@ -29,8 +29,8 @@ import numpy as np
 import rapidhrv as rhv
 
 my_data = np.load("my_data.npy")  # Load data
-noise_data = rhv.Signal(my_data, sample_rate=50)  # Convert to rhv Signal class
-preprocessed = rhv.preprocess(my_data)  # Preprocess: may interpolate data, check the docstring on `rapidhrv.preprocess`
+data = rhv.Signal(my_data, sample_rate=50)  # Convert to rhv Signal class
+preprocessed = rhv.preprocess(data)  # Preprocess: may interpolate data, check the docstring on `rapidhrv.preprocess`
 result = rhv.analyze(preprocessed)  # Analyze signal
 ```
 
