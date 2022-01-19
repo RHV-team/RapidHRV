@@ -7,15 +7,12 @@ from dash.dependencies import Input, Output
 import rapidhrv as rhv
 
 
-def results_graph(analyzed, selected_column):
-    non_outlier = analyzed.loc[~analyzed["Outlier"]]
-    outliers = analyzed.loc[analyzed["Outlier"]]
-
+def results_graph(non_outliers, outliers, selected_column):
     fig = go.Figure(
         [
             go.Scatter(
-                x=non_outlier["Time"],
-                y=non_outlier[selected_column],
+                x=non_outliers["Time"],
+                y=non_outliers[selected_column],
                 name=selected_column,
                 mode="lines+markers",
             ),
@@ -55,8 +52,11 @@ def window_graph(window_data):
 def visualize(analyzed: pd.DataFrame, debug=False):
     app = dash.Dash()
 
+    non_outlier_data = analyzed.loc[~analyzed["Outlier"]]
+    outlier_data = analyzed.loc[analyzed["Outlier"]]
+
     selected_column = "BPM"
-    results = results_graph(analyzed, selected_column)
+    results = results_graph(non_outlier_data, outlier_data, selected_column)
 
     app.layout = html.Div(
         [
@@ -73,7 +73,7 @@ def visualize(analyzed: pd.DataFrame, debug=False):
 
     @app.callback(Output("results-graph", "figure"), Input("column-dropdown", "value"))
     def update_results_graph(column):
-        return results_graph(analyzed, column)
+        return results_graph(non_outlier_data, outlier_data, column)
 
     @app.callback(Output("window-container", "children"), Input("results-graph", "clickData"))
     def update_window_graph(click_data):
@@ -81,7 +81,11 @@ def visualize(analyzed: pd.DataFrame, debug=False):
             return []
 
         selected_point = click_data["points"][0]
-        window_data = analyzed.iloc[selected_point["pointNumber"]]["Window"]
+
+        if selected_point["curveNumber"] == 0:
+            window_data = non_outlier_data.iloc[selected_point["pointNumber"]]["Window"]
+        elif selected_point["curveNumber"] == 1:
+            window_data = outlier_data.iloc[selected_point["pointNumber"]]["Window"]
 
         return [dcc.Graph(figure=window_graph(window_data))]
 
