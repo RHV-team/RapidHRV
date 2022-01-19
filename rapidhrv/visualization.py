@@ -7,7 +7,7 @@ from dash.dependencies import Input, Output
 import rapidhrv as rhv
 
 
-def results_graph(analyzed, selected_column, selected_point=None):
+def results_graph(analyzed, selected_column):
     non_outlier = analyzed.loc[~analyzed["Outlier"]]
     outliers = analyzed.loc[analyzed["Outlier"]]
 
@@ -28,11 +28,8 @@ def results_graph(analyzed, selected_column, selected_point=None):
         ]
     )
 
-    if selected_point is not None:
-        fig.add_trace(
-            go.Scatter(x=[selected_point["x"]], y=[selected_point["y"]], showlegend=False)
-        )
-    fig.update_layout(template="plotly_white")
+    fig.update_layout(template="plotly_white", clickmode="event+select")
+    fig.update_traces(marker_size=10)
 
     return fig
 
@@ -74,16 +71,9 @@ def visualize(analyzed: pd.DataFrame, debug=False):
         ]
     )
 
-    @app.callback(
-        Output("results-graph", "figure"),
-        Input("column-dropdown", "value"),
-        Input("results-graph", "clickData"),
-    )
-    def update_results_graph(column, click_data):
-        if click_data is None:
-            return results_graph(analyzed, column)
-        else:
-            return results_graph(analyzed, column, selected_point=click_data["points"][0])
+    @app.callback(Output("results-graph", "figure"), Input("column-dropdown", "value"))
+    def update_results_graph(column):
+        return results_graph(analyzed, column)
 
     @app.callback(Output("window-container", "children"), Input("results-graph", "clickData"))
     def update_window_graph(click_data):
