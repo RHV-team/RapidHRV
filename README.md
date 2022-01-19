@@ -1,7 +1,6 @@
 # RapidHRV
 
-RapidHRV is a data processing pipeline for the analysis and visualization of cardiac data
-(validated on ECG, Pulse Oximetry, and PPG).
+RapidHRV is a data processing pipeline for the analysis and visualization of cardiac data.
 
 Please provide credit where appropriate:
 
