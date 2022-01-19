@@ -7,10 +7,7 @@ from dash.dependencies import Input, Output
 import rapidhrv as rhv
 
 
-def results_graph(analyzed, selected_column):
-    non_outlier = analyzed.loc[~analyzed["Outlier"]]
-    outliers = analyzed.loc[analyzed["Outlier"]]
-
+def results_graph(non_outlier, outlier, selected_column):
     fig = go.Figure(
         [
             go.Scatter(
@@ -55,6 +52,9 @@ def window_graph(window_data):
 def visualize(analyzed: pd.DataFrame, debug=False):
     app = dash.Dash()
 
+    non_outlier = analyzed.loc[~analyzed["Outlier"]]
+    outliers = analyzed.loc[analyzed["Outlier"]]
+
     selected_column = "BPM"
     results = results_graph(analyzed, selected_column)
 
@@ -81,7 +81,11 @@ def visualize(analyzed: pd.DataFrame, debug=False):
             return []
 
         selected_point = click_data["points"][0]
-        window_data = analyzed.iloc[selected_point["pointNumber"]+1]["Window"]
+
+        if selected_point["curveNumber"] == 0:
+            window_data = non_outlier.iloc[selected_point["pointNumber"]]["Window"]
+        elif selected_point["curveNumber"] == 1:
+            window_data = outlier.iloc[selected_point["pointNumber"]]["Window"]
 
         return [dcc.Graph(figure=window_graph(window_data))]
 
