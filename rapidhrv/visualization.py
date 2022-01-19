@@ -7,7 +7,7 @@ from dash.dependencies import Input, Output
 import rapidhrv as rhv
 
 
-def results_graph(non_outlier, outlier, selected_column):
+def results_graph(non_outlier, outliers, selected_column):
     fig = go.Figure(
         [
             go.Scatter(
