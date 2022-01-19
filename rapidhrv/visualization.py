@@ -52,11 +52,11 @@ def window_graph(window_data):
 def visualize(analyzed: pd.DataFrame, debug=False):
     app = dash.Dash()
 
-    non_outlier = analyzed.loc[~analyzed["Outlier"]]
-    outliers = analyzed.loc[analyzed["Outlier"]]
+    non_outlier_data = analyzed.loc[~analyzed["Outlier"]]
+    outlier_data = analyzed.loc[analyzed["Outlier"]]
 
     selected_column = "BPM"
-    results = results_graph(analyzed, selected_column)
+    results = results_graph(non_outlier_data, outlier_data, selected_column)
 
     app.layout = html.Div(
         [
@@ -83,9 +83,9 @@ def visualize(analyzed: pd.DataFrame, debug=False):
         selected_point = click_data["points"][0]
 
         if selected_point["curveNumber"] == 0:
-            window_data = non_outlier.iloc[selected_point["pointNumber"]]["Window"]
+            window_data = non_outlier_data.iloc[selected_point["pointNumber"]]["Window"]
         elif selected_point["curveNumber"] == 1:
-            window_data = outlier.iloc[selected_point["pointNumber"]]["Window"]
+            window_data = outlier_data.iloc[selected_point["pointNumber"]]["Window"]
 
         return [dcc.Graph(figure=window_graph(window_data))]
 
