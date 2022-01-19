@@ -81,7 +81,7 @@ def visualize(analyzed: pd.DataFrame, debug=False):
             return []
 
         selected_point = click_data["points"][0]
-        window_data = analyzed.iloc[selected_point["pointNumber"]]["Window"]
+        window_data = analyzed.iloc[selected_point["pointNumber"]-1]["Window"]
 
         return [dcc.Graph(figure=window_graph(window_data))]
 
