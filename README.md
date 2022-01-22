@@ -35,21 +35,13 @@ result = rhv.analyze(preprocessed)  # Analyze signal
 
 ## Documentation
 
-WIP: We will use https://readthedocs.org/ and sphinx to document the library
+Please see the included [tutorial notebook](https://github.com/peterakirk/RapidHRV/blob/main/resources/tutorial.ipynb).
 
 ## Development
 
 In order to get a working development environment,
 please install [Poetry](https://python-poetry.org/) for your platform,
 and run `poetry install` to generate a virtual environment.
-
-On MacOS, you may need to `export SYSTEM_VERSION_COMPAT=1` before running `poetry install`.
-Read [this blog post](https://eclecticlight.co/2020/08/13/macos-version-numbering-isnt-so-simple/)
-for more details on why.
-
-This project uses [Git LFS](https://git-lfs.github.com),
-please install it for your platform before using the provided data files.
-Run `git lfs fetch && git lfs checkout` after installing to populate the data files.
 
 If you plan on making any changes to the included notebooks,
 please run `nbstripout --install` from within the poetry venv before committing any changes.
