@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "rapidhrv"
-version = "0.2.1"
+version = "0.2.2"
 description = "A package for preprocessing, analyzing and visualizing cardiac data"
 authors = [
   "Peter Kirk <p.kirk@ucl.ac.uk>",
   "Alexander Davidson Bryan <alxdb@pm.me>",
 ]
 license = "MIT"
+readme = "README.md"
 
 [tool.poe.tasks]
 format = [{ cmd = "black ." }, { cmd = "isort ." }]
