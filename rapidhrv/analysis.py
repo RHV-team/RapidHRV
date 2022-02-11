@@ -232,7 +232,7 @@ def frequency_domain(x, sfreq: int = 5):
 
     # Power (ms**2)
     power = np.trapz(x=this_freq, y=this_psd) * 1000000
-    stats.loc[len(stats) + 1, :] = [power, band + "_peak"]
+    stats.loc[len(stats) + 1, :] = [power, band + "_power"]
 
     hf = stats.Values[stats.Metric == "hf_power"].values[0]
 
