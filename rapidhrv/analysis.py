@@ -217,7 +217,7 @@ def frequency_domain(x, sfreq: int = 5):
 
     # Extract HRV parameters
     ########################
-    stats = pd.DataFrame([])
+    stats = pd.DataFrame(columns=["Values", "Metric"])
     band = "hf"
 
     this_psd = psd[(freq >= fbands[band][1][0]) & (freq < fbands[band][1][1])]
@@ -228,11 +228,11 @@ def frequency_domain(x, sfreq: int = 5):
 
     # Peaks (Hz)
     peak = round(this_freq[np.argmax(this_psd)], 4)
-    stats = stats.append({"Values": peak, "Metric": band + "_peak"}, ignore_index=True)
+    stats.loc[len(stats)+1, :] = [peak, band + "_peak"]
 
     # Power (ms**2)
     power = np.trapz(x=this_freq, y=this_psd) * 1000000
-    stats = stats.append({"Values": power, "Metric": band + "_power"}, ignore_index=True)
+    stats.loc[len(stats) + 1, :] = [power, band + "_power"]
 
     hf = stats.Values[stats.Metric == "hf_power"].values[0]
 
