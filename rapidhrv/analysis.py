@@ -228,7 +228,7 @@ def frequency_domain(x, sfreq: int = 5):
 
     # Peaks (Hz)
     peak = round(this_freq[np.argmax(this_psd)], 4)
-    stats.loc[len(stats)+1, :] = [peak, band + "_peak"]
+    stats.loc[len(stats) + 1, :] = [peak, band + "_peak"]
 
     # Power (ms**2)
     power = np.trapz(x=this_freq, y=this_psd) * 1000000
