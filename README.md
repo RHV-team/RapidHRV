@@ -3,10 +3,7 @@
 RapidHRV is a data processing pipeline for the analysis and visualization of cardiac data.
 
 Please provide credit where appropriate:
-
-Kirk, P. A., Davidson Bryan, A., Garfinkel, S., & Robinson, O. J. (2021).
-_RapidHRV: An open-source toolbox for extracting heart rate and heart rate variability_
-([PsyArXiv](https://doi.org/10.31234/osf.io/3ewgz))
+Kirk, P. A., Bryan, A. D., Garfinkel, S. N., & Robinson, O. J. (2022). RapidHRV: An open-source toolbox for extracting heart rate and heart rate variability. PeerJ, 10, e13147. https://doi.org/10.7717/peerj.13147
 
 This library is distributed under an 
 [MIT License](https://raw.githubusercontent.com/peterakirk/RapidHRV/main/LICENSE)
