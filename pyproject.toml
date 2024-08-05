@@ -28,7 +28,7 @@ ignore_missing_imports = true
 line-length = 99
 
 [tool.poetry.dependencies]
-python = "~3.9"
+python = "^3.9"
 numpy = "^1.21.0"
 scipy = "^1.7.0"
 scikit-learn = "^0.24.2"
