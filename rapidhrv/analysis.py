@@ -259,7 +259,7 @@ def outlier_detection(
         return True
 
     def mad_outlier_detection(x: np.ndarray, threshold: float) -> np.ndarray:
-        x = x - np.mean(x)
+        x = x - np.median(x)
         mad = scipy.stats.median_abs_deviation(x) * threshold
         return (x > mad) | (x < -mad)
 
