@@ -11,5 +11,5 @@ runs:
       run: pip install poetry
       shell: bash
     - name: Install Dependencies in Virtual Environment
-      run: poetry install
+      run: poetry lock; poetry install
       shell: bash
